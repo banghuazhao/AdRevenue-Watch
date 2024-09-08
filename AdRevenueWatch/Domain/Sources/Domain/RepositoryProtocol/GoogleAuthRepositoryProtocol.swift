@@ -1,0 +1,17 @@
+//
+// Created by Banghua Zhao on 08/09/2024
+// Copyright Apps Bay Limited. All rights reserved.
+//
+  
+
+import Foundation
+import UIKit
+import GoogleSignIn
+
+public protocol GoogleAuthRepositoryProtocol {
+    @MainActor
+    func signIn(presentingViewController: UIViewController) async throws -> GIDSignInResult
+    func hasPreviousSignIn() -> Bool
+    func restorePreviousSignIn() async throws -> GIDGoogleUser
+    func signOut() async
+}
