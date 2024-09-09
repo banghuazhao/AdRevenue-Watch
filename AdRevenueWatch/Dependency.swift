@@ -14,4 +14,10 @@ enum Dependency {
             googleAuthRepository: GoogleAuthRepository.newRepo
         )
     }
+    
+    static var adMobAccountUseCase: some AdMobAccountUseCaseProtocol {
+        AdMobAccountUseCase(
+            adMobAccountRepository: AdMobAccountRepository.newRepo
+        )
+    }
 }

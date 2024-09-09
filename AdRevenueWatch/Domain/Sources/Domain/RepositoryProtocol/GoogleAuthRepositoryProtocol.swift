@@ -10,8 +10,8 @@ import GoogleSignIn
 
 public protocol GoogleAuthRepositoryProtocol {
     @MainActor
-    func signIn(presentingViewController: UIViewController) async throws -> GIDSignInResult
+    func signIn(presentingViewController: UIViewController) async throws -> GoogleUserEntity
     func hasPreviousSignIn() -> Bool
-    func restorePreviousSignIn() async throws -> GIDGoogleUser
+    func restorePreviousSignIn() async throws -> GoogleUserEntity
     func signOut() async
 }

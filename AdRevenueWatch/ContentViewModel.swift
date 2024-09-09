@@ -10,7 +10,9 @@ import UIKit
 @MainActor
 class ContentViewModel: ObservableObject {
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
-    private var accessToken: String?
+    private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
+    
+    private var googleUserEntity: GoogleUserEntity?
     @Published var viewState: ViewState = .onboarding
     enum ViewState {
         case onViewLoad
@@ -20,13 +22,15 @@ class ContentViewModel: ObservableObject {
         case adMobReport
     }
 
-    @Published var accounts: String?
+    @Published var adMobAccounts: [AdMobAccountEntity] = []
     @Published var report: String?
 
     init(
-        googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase
+        googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
+        adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase
     ) {
         self.googleAuthUseCase = googleAuthUseCase
+        self.adMobAccountUseCase = adMobAccountUseCase
     }
 
     func onViewLoad() async {
@@ -36,7 +40,7 @@ class ContentViewModel: ObservableObject {
             return
         }
         do {
-            accessToken = try await googleAuthUseCase.restorePreviousSignIn()
+            googleUserEntity = try await googleAuthUseCase.restorePreviousSignIn()
             try? await fetchAdMobAccounts()
         } catch {
             print("Unable to restore previous sign in: \(error.localizedDescription)")
@@ -48,7 +52,7 @@ class ContentViewModel: ObservableObject {
     func onTapGoogleSignIn() async {
         if googleAuthUseCase.hasPreviousSignIn() {
             do {
-                accessToken = try await googleAuthUseCase.restorePreviousSignIn()
+                googleUserEntity = try await googleAuthUseCase.restorePreviousSignIn()
             } catch {
                 print("Unable to restore previous sign in: \(error.localizedDescription)")
                 await presentGoogleSignIn()
@@ -67,48 +71,32 @@ class ContentViewModel: ObservableObject {
             return
         }
         do {
-            accessToken = try await googleAuthUseCase.signIn(presentingViewController: presentingWindow)
+            googleUserEntity = try await googleAuthUseCase.signIn(presentingViewController: presentingWindow)
         } catch {
             print("Unable to sign in: \(error.localizedDescription)")
         }
     }
 
     func fetchAdMobAccounts() async throws {
-        guard let accessToken else {
+        guard let accessToken = googleUserEntity?.accessToken else {
             viewState = .onboarding
             return
         }
         viewState = .fetchingAdMobAccounts
+        
+        adMobAccounts = try await adMobAccountUseCase.fetchAccounts(accessToken: accessToken)
 
-        let url = URL(string: "https://admob.googleapis.com/v1/accounts")!
-        var request = URLRequest(url: url)
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-
-        // Perform the network request using URLSession's async function
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        // Check if the response is valid (status code 200)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            print("The server's response is invalid (not 200)")
-            return
-//            throw URLError(.badServerResponse)
-        }
-
-        accounts = createJsonStringFrom(data: data)
-
-        let adMobAccount = try JSONDecoder().decode(AdMobAccount.self, from: data)
-
-        print(adMobAccount)
+        print(adMobAccounts)
 
         do {
-            try await fetchAdMobReport(accountID: adMobAccount.account.first!.publisherID)
+            try await fetchAdMobReport(accountID: adMobAccounts.first!.publisherID)
         } catch {
             print(error.localizedDescription)
         }
     }
 
     func fetchAdMobReport(accountID: String) async throws {
-        guard let accessToken else {
+        guard let accessToken = googleUserEntity?.accessToken else {
             viewState = .onboarding
             return
         }
@@ -142,9 +130,6 @@ class ContentViewModel: ObservableObject {
 
         // Make the API call
         let (data, response) = try await URLSession.shared.data(for: request)
-
-        print(String(data: data, encoding: .utf8))
-        print(response)
 
         // Check for valid response
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
