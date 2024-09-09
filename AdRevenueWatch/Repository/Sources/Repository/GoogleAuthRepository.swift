@@ -13,8 +13,8 @@ public struct GoogleAuthRepository: GoogleAuthRepositoryProtocol {
     }
 
     @MainActor
-    public func signIn(presentingViewController: UIViewController) async throws -> GIDSignInResult {
-        try await GIDSignIn.sharedInstance.signIn(
+    public func signIn(presentingViewController: UIViewController) async throws -> GoogleUserEntity {
+        let result = try await GIDSignIn.sharedInstance.signIn(
             withPresenting: presentingViewController,
             hint: nil,
             additionalScopes: [
@@ -22,14 +22,18 @@ public struct GoogleAuthRepository: GoogleAuthRepositoryProtocol {
                 "https://www.googleapis.com/auth/admob.report",
             ]
         )
+        let accessToken = result.user.accessToken.tokenString
+        return GoogleUserEntity(accessToken: accessToken)
     }
 
     public func hasPreviousSignIn() -> Bool {
         GIDSignIn.sharedInstance.hasPreviousSignIn()
     }
 
-    public func restorePreviousSignIn() async throws -> GIDGoogleUser {
-        try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+    public func restorePreviousSignIn() async throws -> GoogleUserEntity {
+        let user = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+        let accessToken = user.accessToken.tokenString
+        return GoogleUserEntity(accessToken: accessToken)
     }
 
     public func signOut() async {

@@ -34,16 +34,18 @@ struct ContentView: View {
             case .fetchingAdMobReport:
                 ScrollView {
                     Text("Accounts:")
-                    if let accounts = viewModel.accounts {
-                        Text(accounts)
+
+                    ForEach(viewModel.adMobAccounts) { account in
+                        Text(account.description)
                     }
+
                     ProgressView()
                 }
             case .adMobReport:
                 ScrollView {
                     Text("Accounts:")
-                    if let accounts = viewModel.accounts {
-                        Text(accounts)
+                    ForEach(viewModel.adMobAccounts) { account in
+                        Text(account.description)
                     }
                     Text("Report:")
                     if let report = viewModel.report {

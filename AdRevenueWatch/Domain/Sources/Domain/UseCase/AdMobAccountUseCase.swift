@@ -6,10 +6,15 @@
 import Foundation
 
 public protocol AdMobAccountUseCaseProtocol {
-    func fetchAdMobAccount()
+    func fetchAccounts(accessToken: String) async throws -> [AdMobAccountEntity]
 }
 
 public struct AdMobAccountUseCase: AdMobAccountUseCaseProtocol {
-    public func fetchAdMobAccount() {
+    private let adMobAccountRepository: any AdMobAccountRepositoryProtocol
+    public init(adMobAccountRepository: some AdMobAccountRepositoryProtocol) {
+        self.adMobAccountRepository = adMobAccountRepository
+    }
+    public func fetchAccounts(accessToken: String) async throws -> [AdMobAccountEntity] {
+        try await adMobAccountRepository.fetchAccounts(accessToken: accessToken)
     }
 }

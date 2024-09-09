@@ -8,9 +8,9 @@ import GoogleSignIn
 import UIKit
 
 public protocol GoogleAuthUseCaseProtocol {
-    func signIn(presentingViewController: UIViewController) async throws -> String
+    func signIn(presentingViewController: UIViewController) async throws -> GoogleUserEntity
     func hasPreviousSignIn() -> Bool
-    func restorePreviousSignIn() async throws -> String
+    func restorePreviousSignIn() async throws -> GoogleUserEntity
     func signOut() async
 }
 
@@ -22,18 +22,16 @@ public struct GoogleAuthUseCase: GoogleAuthUseCaseProtocol {
     }
 
     @MainActor
-    public func signIn(presentingViewController: UIViewController) async throws -> String {
-        let result = try await googleAuthRepository.signIn(presentingViewController: presentingViewController)
-        return result.user.accessToken.tokenString
+    public func signIn(presentingViewController: UIViewController) async throws -> GoogleUserEntity {
+        try await googleAuthRepository.signIn(presentingViewController: presentingViewController)
     }
 
     public func hasPreviousSignIn() -> Bool {
         googleAuthRepository.hasPreviousSignIn()
     }
 
-    public func restorePreviousSignIn() async throws -> String {
-        let user = try await googleAuthRepository.restorePreviousSignIn()
-        return user.accessToken.tokenString
+    public func restorePreviousSignIn() async throws -> GoogleUserEntity {
+        try await googleAuthRepository.restorePreviousSignIn()
     }
 
     public func signOut() async {
