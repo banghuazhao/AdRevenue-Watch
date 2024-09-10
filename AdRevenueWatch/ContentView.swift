@@ -31,32 +31,45 @@ struct ContentView: View {
                 }
             case .fetchingAdMobAccounts:
                 ProgressView()
-            case .fetchingAdMobReport:
-                ScrollView {
-                    Text("Accounts:")
-
-                    ForEach(viewModel.adMobAccounts) { account in
-                        Text(account.description)
+            case .adMobAccounts, .fetchingAdMobReport, .adMobReport:
+                NavigationStack {
+                    ScrollView {
+                        VStack {
+                            if case .fetchingAdMobReport = viewModel.viewState {
+                                ProgressView()
+                            } else {
+                                Text("Report:")
+                                if let adMobReportEntity = viewModel.adMobReportEntity {
+                                    Text(adMobReportEntity.description)
+                                }
+                            }
+                        }
                     }
-
-                    ProgressView()
-                }
-            case .adMobReport:
-                ScrollView {
-                    Text("Accounts:")
-                    ForEach(viewModel.adMobAccounts) { account in
-                        Text(account.description)
-                    }
-                    Text("Report:")
-                    if let report = viewModel.report {
-                        Text(report)
+                    .navigationTitle("AdMob Report")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Menu("Select Account", systemImage: "person.crop.circle") {
+                                Picker("", selection: $viewModel.selectedPublisherID) {
+                                    ForEach(viewModel.adMobAccounts) { account in
+                                        Text(account.publisherID)
+                                            .tag(account.publisherID)
+                                    }
+                                }
+                            }
+                            
+                        }
                     }
                 }
             }
         }
         .task {
-            Task { @MainActor in
-                await viewModel.onViewLoad()
+            await viewModel.onViewLoad()
+        }
+        .onChange(of: viewModel.selectedPublisherID) { selectedPublisherID in
+            if !selectedPublisherID.isEmpty {
+                Task {
+                    await viewModel.fetchAdMobReport(accountID: selectedPublisherID)
+                }
             }
         }
     }

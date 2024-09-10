@@ -20,4 +20,10 @@ enum Dependency {
             adMobAccountRepository: AdMobAccountRepository.newRepo
         )
     }
+    
+    static var adMobReportUseCase: some AdMobReportUseCaseProtocol {
+        AdMobReportUseCase(
+            adMobReportRepository: AdMobReportRepository.newRepo
+        )
+    }
 }

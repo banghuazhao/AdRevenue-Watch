@@ -11,26 +11,31 @@ import UIKit
 class ContentViewModel: ObservableObject {
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
     private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
-    
+    private let adMobReportUseCase: any AdMobReportUseCaseProtocol
+
     private var googleUserEntity: GoogleUserEntity?
     @Published var viewState: ViewState = .onboarding
     enum ViewState {
         case onViewLoad
         case onboarding
         case fetchingAdMobAccounts
+        case adMobAccounts
         case fetchingAdMobReport
         case adMobReport
     }
 
     @Published var adMobAccounts: [AdMobAccountEntity] = []
-    @Published var report: String?
+    @Published var selectedPublisherID: String = ""
+    @Published var adMobReportEntity: AdMobReportEntity?
 
     init(
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
-        adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase
+        adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase,
+        adMobReportUseCase: some AdMobReportUseCaseProtocol = Dependency.adMobReportUseCase
     ) {
         self.googleAuthUseCase = googleAuthUseCase
         self.adMobAccountUseCase = adMobAccountUseCase
+        self.adMobReportUseCase = adMobReportUseCase
     }
 
     func onViewLoad() async {
@@ -83,61 +88,49 @@ class ContentViewModel: ObservableObject {
             return
         }
         viewState = .fetchingAdMobAccounts
-        
+
         adMobAccounts = try await adMobAccountUseCase.fetchAccounts(accessToken: accessToken)
+        selectedPublisherID = adMobAccounts.first?.publisherID ?? "1"
 
+        viewState = .adMobAccounts
         print(adMobAccounts)
-
-        do {
-            try await fetchAdMobReport(accountID: adMobAccounts.first!.publisherID)
-        } catch {
-            print(error.localizedDescription)
-        }
     }
 
-    func fetchAdMobReport(accountID: String) async throws {
+    func fetchAdMobReport(accountID: String) async {
         guard let accessToken = googleUserEntity?.accessToken else {
             viewState = .onboarding
             return
         }
         viewState = .fetchingAdMobReport
-
-        let url = URL(string: "https://admob.googleapis.com/v1/accounts/\(accountID)/networkReport:generate")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Create the request body matching the curl example
-        let reportRequest = AdMobNetworkReportRequest(
+        adMobReportEntity = nil
+        let reportRequest = AdMobReportRequestEntity(
             reportSpec: ReportSpec(
                 dateRange: DateRange(
                     startDate: DateSpec(year: 2024, month: 8, day: 1),
                     endDate: DateSpec(year: 2024, month: 9, day: 7)
                 ),
                 dimensions: ["DATE"],
-                metrics: ["CLICKS", "AD_REQUESTS", "IMPRESSIONS", "ESTIMATED_EARNINGS"],
+                metrics: [.clicks, .adRequests, .impressions, .estimatedEarnings],
                 dimensionFilters: [],
                 sortConditions: [
-                    SortCondition(metric: "CLICKS", order: "DESCENDING"),
+                    SortCondition(metric: .clicks, order: "DESCENDING"),
                 ],
                 localizationSettings: LocalizationSettings(currencyCode: "USD", languageCode: "en-US")
             )
         )
 
-        let jsonData = try JSONEncoder().encode(reportRequest)
-        request.httpBody = jsonData
+        print(reportRequest)
 
-        // Make the API call
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        // Check for valid response
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+        do {
+            adMobReportEntity = try await adMobReportUseCase.fetchReport(
+                accessToken: accessToken,
+                accountID: accountID,
+                reportRequest: reportRequest
+            )
+        } catch {
+            print("Failed to fetch report: \(error.localizedDescription)")
         }
 
-        report = createJsonStringFrom(data: data)
-        
         viewState = .adMobReport
     }
 

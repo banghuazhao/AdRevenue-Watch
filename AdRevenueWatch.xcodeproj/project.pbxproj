@@ -13,7 +13,6 @@
 		9972A7BC2C8C62970027DBD2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9972A7BB2C8C62970027DBD2 /* Preview Assets.xcassets */; };
 		9972A7C42C8C63330027DBD2 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7C32C8C63330027DBD2 /* GoogleSignIn */; };
 		9972A7C62C8C63330027DBD2 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7C52C8C63330027DBD2 /* GoogleSignInSwift */; };
-		9972A7CF2C8C74330027DBD2 /* AdMobNetworkReportRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9972A7CE2C8C74330027DBD2 /* AdMobNetworkReportRequest.swift */; };
 		9972A7D72C8DA2800027DBD2 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7D62C8DA2800027DBD2 /* Domain */; };
 		9972A7DA2C8DAA730027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7D92C8DAA730027DBD2 /* Repository */; };
 		9972A7DE2C8DAAA10027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7DD2C8DAAA10027DBD2 /* Repository */; };
@@ -31,7 +30,6 @@
 		9972A7B82C8C62970027DBD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9972A7BB2C8C62970027DBD2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9972A7C72C8C63840027DBD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9972A7CE2C8C74330027DBD2 /* AdMobNetworkReportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobNetworkReportRequest.swift; sourceTree = "<group>"; };
 		9972A7D42C8DA2580027DBD2 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
 		9972A7E22C8DAACB0027DBD2 /* Repository */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Repository; sourceTree = "<group>"; };
 		99A841CC2C8DACB700D74617 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
@@ -79,7 +77,6 @@
 			children = (
 				9972A7E22C8DAACB0027DBD2 /* Repository */,
 				9972A7D42C8DA2580027DBD2 /* Domain */,
-				9972A7CD2C8C74240027DBD2 /* Model */,
 				9972A7B42C8C62950027DBD2 /* AdRevenueWatchApp.swift */,
 				9972A7B62C8C62950027DBD2 /* ContentView.swift */,
 				99A841CC2C8DACB700D74617 /* ContentViewModel.swift */,
@@ -96,14 +93,6 @@
 				9972A7BB2C8C62970027DBD2 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		9972A7CD2C8C74240027DBD2 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				9972A7CE2C8C74330027DBD2 /* AdMobNetworkReportRequest.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		9972A7D32C8DA05B0027DBD2 /* Supportings */ = {
@@ -211,7 +200,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9972A7CF2C8C74330027DBD2 /* AdMobNetworkReportRequest.swift in Sources */,
 				9972A7B72C8C62950027DBD2 /* ContentView.swift in Sources */,
 				99A841CF2C8DAD3500D74617 /* Dependency.swift in Sources */,
 				9972A7B52C8C62950027DBD2 /* AdRevenueWatchApp.swift in Sources */,
@@ -275,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -333,7 +321,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -361,7 +349,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -393,7 +381,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

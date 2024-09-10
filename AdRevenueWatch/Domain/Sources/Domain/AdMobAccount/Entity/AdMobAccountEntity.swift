@@ -10,7 +10,7 @@ public struct AdMobAccountEntity: Codable, CustomStringConvertible, Identifiable
         publisherID
     }
 
-    public let publisherID: String
+    public var publisherID: String
     public let name: String
     public let currencyCode: String
     public let reportingTimeZone: String
