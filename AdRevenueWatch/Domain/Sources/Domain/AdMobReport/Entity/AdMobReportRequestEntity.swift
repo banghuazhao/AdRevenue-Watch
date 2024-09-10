@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct AdMobNetworkReportRequestEntity: Codable, CustomStringConvertible {
+public struct AdMobReportRequestEntity: Codable, CustomStringConvertible {
     let reportSpec: ReportSpec
 
     enum CodingKeys: String, CodingKey {

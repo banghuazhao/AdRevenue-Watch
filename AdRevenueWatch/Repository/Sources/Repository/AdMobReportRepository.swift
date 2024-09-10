@@ -20,8 +20,8 @@ public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
     public func fetchReport(
         accessToken: String,
         accountID: String,
-        reportRequest: AdMobNetworkReportRequestEntity
-    ) async throws -> Data {
+        reportRequest: AdMobReportRequestEntity
+    ) async throws -> AdMobReportEntity {
         let url = URL(string: "https://admob.googleapis.com/v1/accounts/\(accountID)/networkReport:generate")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -36,7 +36,7 @@ public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-        
-        return data
+
+        return try JSONDecoder().decode(AdMobReportEntity.self, from: data)
     }
 }

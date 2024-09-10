@@ -10,6 +10,6 @@ public protocol AdMobReportRepositoryProtocol {
     func fetchReport(
         accessToken: String,
         accountID: String,
-        reportRequest: AdMobNetworkReportRequestEntity
-    ) async throws -> Data
+        reportRequest: AdMobReportRequestEntity
+    ) async throws -> AdMobReportEntity
 }

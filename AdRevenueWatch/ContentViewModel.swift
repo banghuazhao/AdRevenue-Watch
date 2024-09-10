@@ -26,7 +26,7 @@ class ContentViewModel: ObservableObject {
 
     @Published var adMobAccounts: [AdMobAccountEntity] = []
     @Published var selectedPublisherID: String = ""
-    @Published var report: String?
+    @Published var adMobReportEntity: AdMobReportEntity?
 
     init(
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
@@ -102,8 +102,8 @@ class ContentViewModel: ObservableObject {
             return
         }
         viewState = .fetchingAdMobReport
-        report = nil
-        let reportRequest = AdMobNetworkReportRequestEntity(
+        adMobReportEntity = nil
+        let reportRequest = AdMobReportRequestEntity(
             reportSpec: ReportSpec(
                 dateRange: DateRange(
                     startDate: DateSpec(year: 2024, month: 8, day: 1),
@@ -122,12 +122,11 @@ class ContentViewModel: ObservableObject {
         print(reportRequest)
 
         do {
-            let data = try await adMobReportUseCase.fetchReport(
+            adMobReportEntity = try await adMobReportUseCase.fetchReport(
                 accessToken: accessToken,
                 accountID: accountID,
                 reportRequest: reportRequest
             )
-            report = createJsonStringFrom(data: data)
         } catch {
             print("Failed to fetch report: \(error.localizedDescription)")
         }

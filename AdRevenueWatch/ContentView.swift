@@ -39,8 +39,8 @@ struct ContentView: View {
                                 ProgressView()
                             } else {
                                 Text("Report:")
-                                if let report = viewModel.report {
-                                    Text(report)
+                                if let adMobReportEntity = viewModel.adMobReportEntity {
+                                    Text(adMobReportEntity.description)
                                 }
                             }
                         }

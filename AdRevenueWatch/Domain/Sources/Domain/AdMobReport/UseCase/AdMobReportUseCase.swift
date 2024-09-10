@@ -9,8 +9,8 @@ public protocol AdMobReportUseCaseProtocol {
     func fetchReport(
         accessToken: String,
         accountID: String,
-        reportRequest: AdMobNetworkReportRequestEntity
-    ) async throws -> Data
+        reportRequest: AdMobReportRequestEntity
+    ) async throws -> AdMobReportEntity
 }
 
 public struct AdMobReportUseCase: AdMobReportUseCaseProtocol {
@@ -25,8 +25,8 @@ public struct AdMobReportUseCase: AdMobReportUseCaseProtocol {
     public func fetchReport(
         accessToken:
         String, accountID: String,
-        reportRequest: AdMobNetworkReportRequestEntity
-    ) async throws -> Data {
+        reportRequest: AdMobReportRequestEntity
+    ) async throws -> AdMobReportEntity {
         try await adMobReportRepository.fetchReport(accessToken: accessToken, accountID: accountID, reportRequest: reportRequest)
     }
 }
