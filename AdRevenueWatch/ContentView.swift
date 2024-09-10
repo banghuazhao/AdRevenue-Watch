@@ -55,6 +55,12 @@ struct ContentView: View {
                                             .tag(account.publisherID)
                                     }
                                 }
+                                
+                                Button("Logout") {
+                                    Task {
+                                        await viewModel.onTapLogout()
+                                    }
+                                }
                             }
                             
                         }
