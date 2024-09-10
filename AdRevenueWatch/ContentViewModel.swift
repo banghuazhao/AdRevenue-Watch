@@ -77,6 +77,7 @@ class ContentViewModel: ObservableObject {
         }
         do {
             googleUserEntity = try await googleAuthUseCase.signIn(presentingViewController: presentingWindow)
+            try? await fetchAdMobAccounts()
         } catch {
             print("Unable to sign in: \(error.localizedDescription)")
         }
@@ -132,6 +133,11 @@ class ContentViewModel: ObservableObject {
         }
 
         viewState = .adMobReport
+    }
+
+    func onTapLogout() async {
+        await googleAuthUseCase.signOut()
+        viewState = .onboarding
     }
 
     func createJsonStringFrom(data: Data) -> String {

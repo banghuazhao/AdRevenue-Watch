@@ -3,6 +3,7 @@
 // Copyright Apps Bay Limited. All rights reserved.
 //
 
+import GoogleSignIn
 import SwiftUI
 
 @main
@@ -12,6 +13,9 @@ struct AdRevenueWatchApp: App {
             ContentView(
                 viewModel: ContentViewModel()
             )
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
         }
     }
 }
