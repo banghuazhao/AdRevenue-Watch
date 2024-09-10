@@ -4,7 +4,6 @@
 //
 
 import Foundation
-import GoogleSignIn
 import UIKit
 
 public protocol GoogleAuthUseCaseProtocol {

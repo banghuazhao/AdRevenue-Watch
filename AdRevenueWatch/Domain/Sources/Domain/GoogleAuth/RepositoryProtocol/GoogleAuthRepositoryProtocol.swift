@@ -6,7 +6,6 @@
 
 import Foundation
 import UIKit
-import GoogleSignIn
 
 public protocol GoogleAuthRepositoryProtocol {
     @MainActor

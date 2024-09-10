@@ -14,17 +14,11 @@ let package = Package(
             name: "Domain",
             targets: ["Domain"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "8.0.0"),
-    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Domain",
-            dependencies: [
-                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
-            ]
+            name: "Domain"
         ),
         .testTarget(
             name: "DomainTests",
