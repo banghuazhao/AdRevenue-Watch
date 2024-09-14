@@ -10,8 +10,8 @@ import SwiftUI
 struct AdRevenueWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(
-                viewModel: ContentViewModel()
+            AppView(
+                viewModel: Dependency.appViewModel
             )
             .onOpenURL { url in
                 GIDSignIn.sharedInstance.handle(url)
