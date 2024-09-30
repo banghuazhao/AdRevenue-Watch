@@ -35,8 +35,8 @@ enum Dependency {
             }
     }
 
-    @MainActor static func adMobViewModel(accessToken: String) -> AdMobViewModel {
-        AdMobViewModel(
+    @MainActor static func adMobViewModel(accessToken: String) -> AdMobReportViewModel {
+        AdMobReportViewModel(
             accessToken: accessToken,
             googleAuthUseCase: googleAuthUseCase,
             adMobAccountUseCase: adMobAccountUseCase,

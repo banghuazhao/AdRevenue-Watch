@@ -5,10 +5,10 @@
 
 import SwiftUI
 
-struct AdMobView: View {
-    @StateObject var viewModel: AdMobViewModel
+struct AdMobReportView: View {
+    @StateObject var viewModel: AdMobReportViewModel
 
-    init(viewModel: @autoclosure @escaping () -> AdMobViewModel) {
+    init(viewModel: @autoclosure @escaping () -> AdMobReportViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -29,8 +29,8 @@ struct AdMobView: View {
     var reportView: some View {
         NavigationStack {
             ScrollView {
-                if let adMobReportEntity = viewModel.adMobReportEntity {
-                    Text(adMobReportEntity.description)
+                if let totalEarningsData = viewModel.totalEarningsData {
+                    TotalEarningsView(totalEarningsData: totalEarningsData)
                 } else {
                     ProgressView()
                 }

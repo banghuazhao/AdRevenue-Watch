@@ -37,6 +37,7 @@ public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
             throw URLError(.badServerResponse)
         }
 
-        return try JSONDecoder().decode(AdMobReportEntity.self, from: data)
+        let adMobReportDTO = try JSONDecoder().decode(AdMobReportDTO.self, from: data)
+        return adMobReportDTO.toAdMobReportEntity()
     }
 }

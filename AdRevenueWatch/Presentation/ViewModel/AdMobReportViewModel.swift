@@ -7,7 +7,7 @@ import Domain
 import Foundation
 
 @MainActor
-class AdMobViewModel: ObservableObject {
+class AdMobReportViewModel: ObservableObject {
     private let accessToken: String
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
     private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
@@ -22,7 +22,7 @@ class AdMobViewModel: ObservableObject {
 
     @Published var adMobPublisherIDs: [String] = []
     @Published var selectedPublisherID: String = ""
-    @Published var adMobReportEntity: AdMobReportEntity?
+    @Published var totalEarningsData: TotalEarningData?
 
     init(
         accessToken: String,
@@ -54,12 +54,14 @@ class AdMobViewModel: ObservableObject {
     }
 
     func fetchAdMobReport(accountID: String) async {
-        adMobReportEntity = nil
+        let today = Date()
+        let calendar = Calendar.current
+        guard let twoMonthsAgo = calendar.date(byAdding: .month, value: -2, to: today) else { return }
         let reportRequest = AdMobReportRequestEntity(
             reportSpec: ReportSpec(
                 dateRange: DateRange(
-                    startDate: DateSpec(year: 2024, month: 8, day: 1),
-                    endDate: DateSpec(year: 2024, month: 9, day: 7)
+                    startDate: DateSpec(year: twoMonthsAgo.year, month: twoMonthsAgo.month, day: twoMonthsAgo.day),
+                    endDate: DateSpec(year: today.year, month: today.month, day: today.day)
                 ),
                 dimensions: ["DATE"],
                 metrics: [.clicks, .adRequests, .impressions, .estimatedEarnings],
@@ -74,11 +76,12 @@ class AdMobViewModel: ObservableObject {
         print(reportRequest)
 
         do {
-            adMobReportEntity = try await adMobReportUseCase.fetchReport(
+            let dashboardEntity = try await adMobReportUseCase.fetchReport(
                 accessToken: accessToken,
                 accountID: accountID,
                 reportRequest: reportRequest
             )
+            totalEarningsData = dashboardEntity.totalEarning.toTotalEarningData()
         } catch {
             print("Failed to fetch report: \(error.localizedDescription)")
         }
@@ -87,5 +90,36 @@ class AdMobViewModel: ObservableObject {
     func onTapLogout() async {
         await googleAuthUseCase.signOut()
         onLogout()
+    }
+}
+
+// Extension to convert TotalEarningEntity to TotalEarningData
+extension TotalEarningEntity {
+    func toTotalEarningData() -> TotalEarningData {
+        // Get a USD formatter
+        let formatter = usdCurrencyFormatter()
+        
+        // Format each earning as a currency string
+        let todayEarningsString = formatter.string(from: todayEarnings as NSDecimalNumber) ?? "$0.00"
+        let yesterdayEarningsString = formatter.string(from: yesterdayEarnings as NSDecimalNumber) ?? "$0.00"
+        let thisMonthEarningsString = formatter.string(from: thisMonthEarnings as NSDecimalNumber) ?? "$0.00"
+        let lastMonthEarningsString = formatter.string(from: lastMonthEarnings as NSDecimalNumber) ?? "$0.00"
+
+        // Return TotalEarningData with formatted strings
+        return TotalEarningData(
+            todayEarnings: todayEarningsString,
+            yesterdayEarnings: yesterdayEarningsString,
+            thisMonthEarnings: thisMonthEarningsString,
+            lastMonthEarnings: lastMonthEarningsString
+        )
+    }
+    
+    // Create a formatter for USD currency
+    func usdCurrencyFormatter() -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.maximumFractionDigits = 2
+        return formatter
     }
 }
