@@ -19,7 +19,7 @@ struct AppView: View {
                 OnboardingView(
                     viewModel: Dependency.onboardingViewModel
                 )
-            case let .adMob(accessToken):
+            case let .adMobReport(accessToken):
                 AdMobReportView(
                     viewModel: Dependency.adMobViewModel(accessToken: accessToken)
                 )

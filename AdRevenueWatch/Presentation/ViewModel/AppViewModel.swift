@@ -8,13 +8,13 @@ import Foundation
 class AppViewModel: ObservableObject {
     enum State {
         case onboarding
-        case adMob(accessToken: String)
+        case adMobReport(accessToken: String)
     }
 
     @Published var state: State = .onboarding
 
     func onLogin(accessToken: String) {
-        state = .adMob(accessToken: accessToken)
+        state = .adMobReport(accessToken: accessToken)
     }
 
     func onLogout() {

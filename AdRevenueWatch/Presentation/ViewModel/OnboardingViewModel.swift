@@ -29,40 +29,18 @@ class OnboardingViewModel: ObservableObject {
 
     func onViewLoad() async {
         viewState = .loading
-        guard googleAuthUseCase.hasPreviousSignIn() else {
-            viewState = .onboarding
-            return
-        }
         do {
-            try await restorePreviousSignIn()
+            let googleUserEntity = try await googleAuthUseCase.restorePreviousSignIn()
+            let accessToken = googleUserEntity.accessToken
+            onLogin(accessToken)
         } catch {
             print("Unable to restore previous sign in: \(error.localizedDescription)")
-            await googleAuthUseCase.signOut()
             viewState = .onboarding
-        }
-    }
-
-    func restorePreviousSignIn() async throws {
-        let googleUserEntity = try await googleAuthUseCase.restorePreviousSignIn()
-        let accessToken = googleUserEntity.accessToken
-        onLogin(accessToken)
-    }
-
-    func onTapGoogleSignIn() async {
-        if googleAuthUseCase.hasPreviousSignIn() {
-            do {
-                try await restorePreviousSignIn()
-            } catch {
-                print("Unable to restore previous sign in: \(error.localizedDescription)")
-                await presentGoogleSignIn()
-            }
-        } else {
-            await presentGoogleSignIn()
         }
     }
 
     @MainActor
-    private func presentGoogleSignIn() async {
+    func onTapGoogleSignIn() async {
         guard let presentingWindow = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .flatMap({ $0.windows })
