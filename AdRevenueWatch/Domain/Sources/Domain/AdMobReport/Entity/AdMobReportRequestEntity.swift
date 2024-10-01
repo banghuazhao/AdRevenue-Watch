@@ -23,4 +23,5 @@ public enum Metric {
     case impressions
     case estimatedEarnings
     case matchRate
+    case eCPM
 }

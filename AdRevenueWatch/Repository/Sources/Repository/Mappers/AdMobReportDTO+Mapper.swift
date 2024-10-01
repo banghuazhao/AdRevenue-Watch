@@ -29,7 +29,9 @@ extension RowData {
             adRequests: metricValues.adRequests?.toIntValue() ?? 0,
             impressions: metricValues.impressions?.toIntValue() ?? 0,
             clicks: metricValues.clicks?.toIntValue() ?? 0,
-            estimatedEarnings: metricValues.estimatedEarnings?.toDecimalValue() ?? 0
+            estimatedEarnings: metricValues.estimatedEarnings?.toDecimalValue() ?? 0,
+            matchRate: metricValues.matchRate?.toDecimalValue() ?? 0,
+            eCPM: metricValues.eCPM?.toDecimalValue() ?? 0
         )
     }
 }
@@ -52,9 +54,11 @@ extension MetricValue {
 
     // Converts microsValue (String) to Decimal by dividing by 1,000,000
     func toDecimalValue() -> Decimal {
-        guard let micros = microsValue, let microsDecimal = Decimal(string: micros) else {
-            return 0
+        if let microsValue, let microsDecimal = Decimal(string: microsValue) {
+            return microsDecimal / 1000000
+        } else if let doubleValue {
+            return Decimal(doubleValue)
         }
-        return microsDecimal / 1000000
+        return 0
     }
 }

@@ -92,53 +92,32 @@ struct RowData: Codable, CustomStringConvertible {
     let metricValues: MetricValues
     let dimensionValues: DimensionValues
     public var description: String {
-        return "Metric Values:\n\(metricValues.description)Dimension Values:\n\t\(dimensionValues.description)"
+        return "Metric Values:\n\(metricValues)Dimension Values:\n\t\(dimensionValues)"
     }
 }
 
-struct MetricValues: Codable, CustomStringConvertible {
+struct MetricValues: Codable {
     let adRequests: MetricValue?
     let impressions: MetricValue?
     let clicks: MetricValue?
     let estimatedEarnings: MetricValue?
+    let matchRate: MetricValue?
+    let eCPM: MetricValue?
 
     enum CodingKeys: String, CodingKey {
         case adRequests = "AD_REQUESTS"
         case impressions = "IMPRESSIONS"
         case clicks = "CLICKS"
         case estimatedEarnings = "ESTIMATED_EARNINGS"
-    }
-
-    var description: String {
-        var descriptionString = ""
-        if let adRequests = adRequests {
-            descriptionString += "AD_REQUESTS: \(adRequests.description)\n"
-        }
-        if let impressions = impressions {
-            descriptionString += "IMPRESSIONS: \(impressions.description)\n"
-        }
-        if let clicks = clicks {
-            descriptionString += "CLICKS: \(clicks.description)\n"
-        }
-        if let estimatedEarnings = estimatedEarnings {
-            descriptionString += "ESTIMATED_EARNINGS: \(estimatedEarnings.description)\n"
-        }
-        return descriptionString
+        case matchRate = "MATCH_RATE"
+        case eCPM = "IMPRESSION_RPM"
     }
 }
 
-struct MetricValue: Codable, CustomStringConvertible {
+struct MetricValue: Codable {
     let integerValue: String?
     let microsValue: String?
-
-    public var description: String {
-        if let integerValue = integerValue {
-            return "Integer Value: \(integerValue)"
-        } else if let microsValue = microsValue {
-            return "Micros Value: \(microsValue)"
-        }
-        return "No Value"
-    }
+    let doubleValue: Double?
 }
 
 struct DimensionValues: Codable, CustomStringConvertible {

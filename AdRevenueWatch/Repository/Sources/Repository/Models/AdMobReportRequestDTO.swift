@@ -30,6 +30,7 @@ public enum Metric: String, Codable, CustomStringConvertible {
     case impressions = "IMPRESSIONS"
     case estimatedEarnings = "ESTIMATED_EARNINGS"
     case matchRate = "MATCH_RATE"
+    case eCPM = "IMPRESSION_RPM"
 
     public var description: String {
         return rawValue

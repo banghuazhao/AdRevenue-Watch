@@ -31,8 +31,9 @@ struct AdMobReportView: View {
             ScrollView {
                 if let totalEarningsData = viewModel.totalEarningsData {
                     TotalEarningsView(totalEarningsData: totalEarningsData)
-                } else {
-                    ProgressView()
+                }
+                if let adsMetricDatas = viewModel.adsMetricDatas {
+                    AdsActivityPerformanceView(metrics: adsMetricDatas)
                 }
             }
             .navigationTitle("AdMob Report")

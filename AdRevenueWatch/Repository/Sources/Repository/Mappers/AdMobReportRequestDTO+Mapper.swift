@@ -62,7 +62,9 @@ extension AdMobReportRequestEntity {
         case .estimatedEarnings:
             return .estimatedEarnings
         case .matchRate:
-            return .matchRate // Replace with appropriate mapping if needed.
+            return .matchRate
+        case .eCPM:
+            return .eCPM
         }
     }
 }
