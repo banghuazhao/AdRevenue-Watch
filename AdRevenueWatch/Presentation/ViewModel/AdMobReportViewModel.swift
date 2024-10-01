@@ -58,22 +58,10 @@ class AdMobReportViewModel: ObservableObject {
         let calendar = Calendar.current
         guard let twoMonthsAgo = calendar.date(byAdding: .month, value: -2, to: today) else { return }
         let reportRequest = AdMobReportRequestEntity(
-            reportSpec: ReportSpec(
-                dateRange: DateRange(
-                    startDate: DateSpec(year: twoMonthsAgo.year, month: twoMonthsAgo.month, day: twoMonthsAgo.day),
-                    endDate: DateSpec(year: today.year, month: today.month, day: today.day)
-                ),
-                dimensions: ["DATE"],
-                metrics: [.clicks, .adRequests, .impressions, .estimatedEarnings],
-                dimensionFilters: [],
-                sortConditions: [
-                    SortCondition(metric: .clicks, order: "DESCENDING"),
-                ],
-                localizationSettings: LocalizationSettings(currencyCode: "USD", languageCode: "en-US")
-            )
+            startDate: twoMonthsAgo,
+            endDate: today,
+            metrics: [.clicks, .adRequests, .impressions, .estimatedEarnings, .matchRate]
         )
-
-        print(reportRequest)
 
         do {
             let dashboardEntity = try await adMobReportUseCase.fetchReport(

@@ -27,7 +27,10 @@ public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
         request.httpMethod = "POST"
         request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let jsonData = try JSONEncoder().encode(reportRequest)
+        
+        let reportRequestDTO = reportRequest.toAdMobReportRequestDTO()
+        
+        let jsonData = try JSONEncoder().encode(reportRequestDTO)
         request.httpBody = jsonData
 
         let (data, response) = try await urlSession.data(for: request)

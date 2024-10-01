@@ -78,23 +78,7 @@ struct ReportLocalizationSettings: Codable, CustomStringConvertible {
     }
 }
 
-struct DateSpec: Codable, CustomStringConvertible {
-    let year: Int
-    let month: Int
-    let day: Int
-
-    public init(year: Int, month: Int, day: Int) {
-        self.year = year
-        self.month = month
-        self.day = day
-    }
-
-    public var description: String {
-        return "\(year)-\(month)-\(day)"
-    }
-}
-
-public struct ReportDateRange: Codable, CustomStringConvertible {
+struct ReportDateRange: Codable, CustomStringConvertible {
     let startDate: DateSpec
     let endDate: DateSpec
 
@@ -104,7 +88,7 @@ public struct ReportDateRange: Codable, CustomStringConvertible {
 }
 
 // Row data structure
-public struct RowData: Codable, CustomStringConvertible {
+struct RowData: Codable, CustomStringConvertible {
     let metricValues: MetricValues
     let dimensionValues: DimensionValues
     public var description: String {
@@ -112,7 +96,7 @@ public struct RowData: Codable, CustomStringConvertible {
     }
 }
 
-public struct MetricValues: Codable, CustomStringConvertible {
+struct MetricValues: Codable, CustomStringConvertible {
     let adRequests: MetricValue?
     let impressions: MetricValue?
     let clicks: MetricValue?
@@ -125,7 +109,7 @@ public struct MetricValues: Codable, CustomStringConvertible {
         case estimatedEarnings = "ESTIMATED_EARNINGS"
     }
 
-    public var description: String {
+    var description: String {
         var descriptionString = ""
         if let adRequests = adRequests {
             descriptionString += "AD_REQUESTS: \(adRequests.description)\n"
