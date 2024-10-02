@@ -54,7 +54,6 @@ struct MetricView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(metric.title)
                     .font(.caption)
-                    .bold()
 
                 Text(metric.value)
                     .font(.headline)
@@ -63,6 +62,7 @@ struct MetricView: View {
                 Text(metric.change)
                     .font(.caption)
                     .foregroundColor(metric.isPositive ? .green : .red)
+                    .bold()
             }
             Spacer()
         }

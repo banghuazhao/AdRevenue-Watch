@@ -308,14 +308,14 @@ extension AdMobReportEntity {
             ),
             AdMetricData(
                 title: "Requests",
-                value: "\(lastTotalRequests)",
-                change: "\(requestsValueChange) (\(formatChange(value: requestsPercentageChange)))",
+                value: lastTotalRequests.formatWithUnits,
+                change: "\(requestsValueChange.formatWithUnits) (\(formatChange(value: requestsPercentageChange)))",
                 isPositive: requestsPercentageChange >= 0
             ),
             AdMetricData(
                 title: "Impressions",
-                value: "\(lastTotalImpressions)",
-                change: "\(impressionsValueChange) (\(formatChange(value: impressionsPercentageChange)))",
+                value: lastTotalImpressions.formatWithUnits,
+                change: "\(impressionsValueChange.formatWithUnits) (\(formatChange(value: impressionsPercentageChange)))",
                 isPositive: impressionsPercentageChange >= 0
             ),
             AdMetricData(
@@ -332,7 +332,7 @@ extension AdMobReportEntity {
             ),
             AdMetricData(
                 title: "Clicks",
-                value: "\(lastTotalClicks)",
+                value: lastTotalClicks.formatWithUnits,
                 change: "\(clicksValueChange) (\(formatChange(value: clicksPercentageChange)))",
                 isPositive: clicksPercentageChange >= 0
             )
@@ -354,5 +354,28 @@ extension AdMobReportEntity {
     // Helper function to format the change value as a string
     private func formatChange(value: Decimal) -> String {
         return String(format: value >= 0 ? "+%.2f%%" : "%.2f%%", NSDecimalNumber(decimal: value).doubleValue)
+    }
+    
+
+}
+
+extension Int {
+    var formatWithUnits: String {
+        switch self {
+        case 100_000_000...:
+            return String(format: "%.0fM", Double(self) / 1_000_000)
+        case 10_000_000...:
+            return String(format: "%.1fM", Double(self) / 1_000_000)
+        case 1_000_000...:
+            return String(format: "%.2fM", Double(self) / 1_000_000)
+        case 100_000...:
+            return String(format: "%.0fK", Double(self) / 1_000)
+        case 10_000...:
+            return String(format: "%.1fK", Double(self) / 1_000)
+        case 1_000...:
+            return String(format: "%.2fK", Double(self) / 1_000)
+        default:
+            return "\(self)"
+        }
     }
 }
