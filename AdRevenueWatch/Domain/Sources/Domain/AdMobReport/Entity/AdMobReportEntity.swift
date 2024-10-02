@@ -32,3 +32,9 @@ public struct DailyAdPerformance {
         self.eCPM = eCPM
     }
 }
+
+public extension DailyAdPerformance {
+    static var zero: Self {
+        DailyAdPerformance(date: Date(), adRequests: 0, impressions: 0, clicks: 0, estimatedEarnings: 0, matchRate: 0, eCPM: 0)
+    }
+}

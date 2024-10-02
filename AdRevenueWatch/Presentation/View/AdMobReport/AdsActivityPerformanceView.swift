@@ -37,6 +37,12 @@ struct AdsActivityPerformanceView: View {
             }
         }
         .padding()
+        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray, lineWidth: 0.5)
+        )
+        .padding()
     }
 }
 
@@ -60,10 +66,6 @@ struct MetricView: View {
             }
             Spacer()
         }
-        .padding(10)
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(8)
-        .shadow(radius: 2)
     }
 }
 

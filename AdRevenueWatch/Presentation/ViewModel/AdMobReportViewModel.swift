@@ -14,15 +14,29 @@ class AdMobReportViewModel: ObservableObject {
     private let adMobReportUseCase: any AdMobReportUseCaseProtocol
     private let onLogout: () -> Void
 
-    @Published var viewState: ViewState = .fetchingAccounts
-    enum ViewState {
+    @Published var state: State = .fetchingAccounts
+    enum State {
         case fetchingAccounts
+        case fetchingReport
         case reports
     }
 
     @Published var adMobPublisherIDs: [String] = []
     @Published var selectedPublisherID: String = ""
+    @Published var adMobReportEntity: AdMobReportEntity?
     @Published var totalEarningsData: TotalEarningData?
+
+    enum DateRangeOption: String, CaseIterable, Identifiable {
+        case todaySoFar = "Today so far"
+        case yesterdayVsLastWeek = "Yesterday vs same day last week"
+        case last7DaysVsPrevious7Days = "Last 7 days vs previous 7 days"
+        case last28DaysVsPrevious28Days = "Last 28 days vs previous 28 days"
+
+        var id: String { rawValue }
+    }
+
+    @Published var selectedDateRangeOption: DateRangeOption = .last7DaysVsPrevious7Days
+
     @Published var adsMetricDatas: [AdMetricData]?
 
     init(
@@ -41,7 +55,7 @@ class AdMobReportViewModel: ObservableObject {
     }
 
     func onLoad() async {
-        viewState = .fetchingAccounts
+        state = .fetchingAccounts
 
         do {
             let adMobAccounts = try await adMobAccountUseCase.fetchAccounts(accessToken: accessToken)
@@ -49,11 +63,12 @@ class AdMobReportViewModel: ObservableObject {
             selectedPublisherID = adMobPublisherIDs.first ?? ""
             await fetchAdMobReport(accountID: selectedPublisherID)
         } catch {
-            viewState = .reports
+            state = .reports
         }
     }
 
     func fetchAdMobReport(accountID: String) async {
+        state = .fetchingReport
         let today = Date()
         let calendar = Calendar.current
         guard let twoMonthsAgo = calendar.date(byAdding: .month, value: -2, to: today) else { return }
@@ -64,22 +79,27 @@ class AdMobReportViewModel: ObservableObject {
         )
 
         do {
-            let adMobReportEntity = try await adMobReportUseCase.fetchReport(
+            adMobReportEntity = try await adMobReportUseCase.fetchReport(
                 accessToken: accessToken,
                 accountID: accountID,
                 reportRequest: reportRequest
             )
-            totalEarningsData = adMobReportEntity.toTotalEarningData()
-            adsMetricDatas = adMobReportEntity.toAdsMetricDatas()
+            totalEarningsData = adMobReportEntity?.toTotalEarningData()
+            adsMetricDatas = adMobReportEntity?.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
         } catch {
             print("Failed to fetch report: \(error.localizedDescription)")
         }
-        viewState = .reports
+        state = .reports
     }
 
     func onTapLogout() async {
         await googleAuthUseCase.signOut()
         onLogout()
+    }
+
+    func onChangeOfSelectedDateRangeOption() {
+        guard let adMobReportEntity else { return }
+        adsMetricDatas = adMobReportEntity.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
     }
 }
 
@@ -122,113 +142,6 @@ extension AdMobReportEntity {
             thisMonthEarnings: thisMonthEarningsString,
             lastMonthEarnings: lastMonthEarningsString
         )
-    }
-
-    func toAdsMetricDatas() -> [AdMetricData] {
-        // Ensure we have at least 14 days of data to calculate the current and previous 7 days
-        guard dailyPerformances.count >= 14 else {
-            return []
-        }
-
-        let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
-
-        // Split the data into the last 7 days and the previous 7 days
-        let last7Days = Array(sortedDailyData.prefix(sortedDailyData.count - 1).suffix(7))
-        let previous7Days = Array(sortedDailyData.prefix(sortedDailyData.count - 1 - 7).suffix(7))
-
-        // Calculate totals for the last 7 days
-        let last7DaysTotalRequests = last7Days.reduce(0) { $0 + $1.adRequests }
-        let last7DaysTotalImpressions = last7Days.reduce(0) { $0 + $1.impressions }
-        let last7DaysTotalEarnings = last7Days.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
-        let last7DaysTotalMatchRate = last7Days.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(last7Days.count)
-        let last7DaysTotalECPM = last7Days.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(last7Days.count)
-        let last7DaysTotalClicks = last7Days.reduce(0) { $0 + $1.clicks }
-
-        // Calculate totals for the previous 7 days
-        let previous7DaysTotalRequests = previous7Days.reduce(0) { $0 + $1.adRequests }
-        let previous7DaysTotalImpressions = previous7Days.reduce(0) { $0 + $1.impressions }
-        let previous7DaysTotalEarnings = previous7Days.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
-        let previous7DaysTotalMatchRate = previous7Days.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(previous7Days.count)
-        let previous7DaysTotalECPM = previous7Days.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(previous7Days.count)
-        let previous7DaysTotalClicks = previous7Days.reduce(0) { $0 + $1.clicks }
-
-        // Calculate changes (percent change compared to the previous 7 days)
-        let requestsChange = percentageChange(current: last7DaysTotalRequests, previous: previous7DaysTotalRequests)
-        let impressionsChange = percentageChange(current: last7DaysTotalImpressions, previous: previous7DaysTotalImpressions)
-        let earningsChange = percentageChange(current: last7DaysTotalEarnings, previous: previous7DaysTotalEarnings)
-        let matchRateChange = percentageChange(current: last7DaysTotalMatchRate, previous: previous7DaysTotalMatchRate)
-        let eCPMChange = percentageChange(current: last7DaysTotalECPM, previous: previous7DaysTotalECPM)
-        let clicksChange = percentageChange(current: last7DaysTotalClicks, previous: previous7DaysTotalClicks)
-
-        // Get a USD formatter
-        let formatter = usdCurrencyFormatter()
-
-        // Format each earning as a currency string
-        let last7DaysTotalEarningsString = formatter.string(from: last7DaysTotalEarnings as NSDecimalNumber) ?? "$0.00"
-        let last7DaysTotalECPMString = formatter.string(from: last7DaysTotalECPM as NSDecimalNumber) ?? "$0.00"
-
-        // Create AdMetricData for each metric
-        let estimatedEarningsMetric = AdMetricData(
-            title: "Estimated earnings",
-            value: last7DaysTotalEarningsString,
-            change: formatChange(value: earningsChange),
-            isPositive: earningsChange >= 0
-        )
-
-        let adRequestsMetric = AdMetricData(
-            title: "Requests",
-            value: "\(last7DaysTotalRequests)",
-            change: formatChange(value: requestsChange),
-            isPositive: requestsChange >= 0
-        )
-
-        let impressionsMetric = AdMetricData(
-            title: "Impression",
-            value: "\(last7DaysTotalImpressions)",
-            change: formatChange(value: impressionsChange),
-            isPositive: impressionsChange >= 0
-        )
-
-        let matchRateMetric = AdMetricData(
-            title: "Match rate",
-            value: String(format: "%.2f%%", NSDecimalNumber(decimal: last7DaysTotalMatchRate).doubleValue * 100),
-            change: formatChange(value: matchRateChange),
-            isPositive: matchRateChange >= 0
-        )
-
-        let eCPMMetric = AdMetricData(
-            title: "eCPM",
-            value: last7DaysTotalECPMString,
-            change: formatChange(value: eCPMChange),
-            isPositive: eCPMChange >= 0
-        )
-
-        let clicks = AdMetricData(
-            title: "Clicks",
-            value: "\(last7DaysTotalClicks)",
-            change: formatChange(value: clicksChange),
-            isPositive: clicksChange >= 0
-        )
-
-        // Return the array of metrics to display in the view
-        return [estimatedEarningsMetric, adRequestsMetric, impressionsMetric, matchRateMetric, eCPMMetric, clicks]
-    }
-
-    // For Decimal type
-    private func percentageChange(current: Decimal, previous: Decimal) -> Decimal {
-        guard previous != 0 else { return 0 }
-        return (current - previous) / previous * 100
-    }
-
-    // For Int type
-    private func percentageChange(current: Int, previous: Int) -> Decimal {
-        guard previous != 0 else { return 0 }
-        return Decimal(current - previous) / Decimal(previous) * 100
-    }
-
-    // Helper function to format the change value as a string
-    private func formatChange(value: Decimal) -> String {
-        return String(format: value >= 0 ? "+%.2f%%" : "%.2f%%", NSDecimalNumber(decimal: value).doubleValue)
     }
 
     // Helper function to check if a date is today
@@ -274,5 +187,172 @@ extension AdMobReportEntity {
         formatter.currencyCode = "USD"
         formatter.maximumFractionDigits = 2
         return formatter
+    }
+}
+
+extension AdMobReportEntity {
+    func toAdsMetricDatas(dateRangeOption: AdMobReportViewModel.DateRangeOption) -> [AdMetricData] {
+        let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
+        
+        // Determine the range based on the selected option
+        switch dateRangeOption {
+        case .todaySoFar:
+            return calculateMetricsForToday(sortedDailyData: sortedDailyData)
+            
+        case .yesterdayVsLastWeek:
+            return calculateMetricsForYesterdayVsSameDayLastWeek(sortedDailyData: sortedDailyData)
+            
+        case .last7DaysVsPrevious7Days:
+            return calculateMetricsForLast7DaysVsPrevious7Days(sortedDailyData: sortedDailyData)
+            
+        case .last28DaysVsPrevious28Days:
+            return calculateMetricsForLast28DaysVsPrevious28Days(sortedDailyData: sortedDailyData)
+        }
+    }
+
+    // Calculate metrics for today so far
+    private func calculateMetricsForToday(sortedDailyData: [DailyAdPerformance]) -> [AdMetricData] {
+        var newData = sortedDailyData
+        while newData.count < 2 {
+            newData.append(DailyAdPerformance.zero)
+        }
+        
+        let today = Array(newData.suffix(1))
+        let yesterday = Array(newData.prefix(newData.count - 1).suffix(1))
+        
+        return calculateComparisonMetrics(lastPeriod: today, previousPeriod: yesterday)
+    }
+    
+    private func calculateMetricsForYesterdayVsSameDayLastWeek(sortedDailyData: [DailyAdPerformance]) -> [AdMetricData] {
+        var newData = sortedDailyData
+        while newData.count < 9 {
+            newData.append(DailyAdPerformance.zero)
+        }
+        
+        let yesterday = Array(newData.prefix(newData.count - 1).suffix(1))
+        let sameDayLastWeek = Array(newData.prefix(newData.count - 1 - 7).suffix(1))
+        
+        return calculateComparisonMetrics(lastPeriod: yesterday, previousPeriod: sameDayLastWeek)
+    }
+
+    // Calculate metrics for "Last 7 days vs previous 7 days"
+    private func calculateMetricsForLast7DaysVsPrevious7Days(sortedDailyData: [DailyAdPerformance]) -> [AdMetricData] {
+        var newData = sortedDailyData
+        while newData.count < 15 {
+            newData.append(DailyAdPerformance.zero)
+        }
+        
+        let last7Days = Array(newData.prefix(newData.count - 1).suffix(7))
+        let previous7Days = Array(newData.prefix(newData.count - 1 - 7).suffix(7))
+        
+        return calculateComparisonMetrics(lastPeriod: last7Days, previousPeriod: previous7Days)
+    }
+
+    // Calculate metrics for "Last 28 days vs previous 28 days"
+    private func calculateMetricsForLast28DaysVsPrevious28Days(sortedDailyData: [DailyAdPerformance]) -> [AdMetricData] {
+        var newData = sortedDailyData
+        while newData.count < 57 {
+            newData.append(DailyAdPerformance.zero)
+        }
+        
+        let last28Days = Array(newData.prefix(newData.count - 1).suffix(28))
+        let previous28Days = Array(newData.prefix(newData.count - 1 - 28).suffix(28))
+        
+        return calculateComparisonMetrics(lastPeriod: last28Days, previousPeriod: previous28Days)
+    }
+
+    // Function to handle comparison between two periods
+    private func calculateComparisonMetrics(lastPeriod: [DailyAdPerformance], previousPeriod: [DailyAdPerformance]) -> [AdMetricData] {
+        let lastTotalRequests = lastPeriod.reduce(0) { $0 + $1.adRequests }
+        let lastTotalImpressions = lastPeriod.reduce(0) { $0 + $1.impressions }
+        let lastTotalEarnings = lastPeriod.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
+        let lastTotalMatchRate = lastPeriod.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(lastPeriod.count)
+        let lastTotalECPM = lastPeriod.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(lastPeriod.count)
+        let lastTotalClicks = lastPeriod.reduce(0) { $0 + $1.clicks }
+        
+        let previousTotalRequests = previousPeriod.reduce(0) { $0 + $1.adRequests }
+        let previousTotalImpressions = previousPeriod.reduce(0) { $0 + $1.impressions }
+        let previousTotalEarnings = previousPeriod.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
+        let previousTotalMatchRate = previousPeriod.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(previousPeriod.count)
+        let previousTotalECPM = previousPeriod.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(previousPeriod.count)
+        let previousTotalClicks = previousPeriod.reduce(0) { $0 + $1.clicks }
+        
+        let formatter = usdCurrencyFormatter()
+        
+        // Calculate percentage and value changes
+        let requestsValueChange = lastTotalRequests - previousTotalRequests
+        let requestsPercentageChange = percentageChange(current: lastTotalRequests, previous: previousTotalRequests)
+        
+        let impressionsValueChange = lastTotalImpressions - previousTotalImpressions
+        let impressionsPercentageChange = percentageChange(current: lastTotalImpressions, previous: previousTotalImpressions)
+        
+        let earningsValueChange = lastTotalEarnings - previousTotalEarnings
+        let earningsPercentageChange = percentageChange(current: lastTotalEarnings, previous: previousTotalEarnings)
+        
+        let matchRateValueChange = lastTotalMatchRate - previousTotalMatchRate
+        let matchRatePercentageChange = percentageChange(current: lastTotalMatchRate, previous: previousTotalMatchRate)
+        
+        let eCPMValueChange = lastTotalECPM - previousTotalECPM
+        let eCPMPercentageChange = percentageChange(current: lastTotalECPM, previous: previousTotalECPM)
+        
+        let clicksValueChange = lastTotalClicks - previousTotalClicks
+        let clicksPercentageChange = percentageChange(current: lastTotalClicks, previous: previousTotalClicks)
+        
+        // Format value changes and percentage changes together
+        return [
+            AdMetricData(
+                title: "Estimated earnings",
+                value: formatter.string(from: lastTotalEarnings as NSDecimalNumber) ?? "$0.00",
+                change: "\(formatter.string(from: earningsValueChange as NSDecimalNumber) ?? "$0.00") (\(formatChange(value: earningsPercentageChange)))",
+                isPositive: earningsPercentageChange >= 0
+            ),
+            AdMetricData(
+                title: "Requests",
+                value: "\(lastTotalRequests)",
+                change: "\(requestsValueChange) (\(formatChange(value: requestsPercentageChange)))",
+                isPositive: requestsPercentageChange >= 0
+            ),
+            AdMetricData(
+                title: "Impressions",
+                value: "\(lastTotalImpressions)",
+                change: "\(impressionsValueChange) (\(formatChange(value: impressionsPercentageChange)))",
+                isPositive: impressionsPercentageChange >= 0
+            ),
+            AdMetricData(
+                title: "Match rate",
+                value: String(format: "%.2f%%", NSDecimalNumber(decimal: lastTotalMatchRate).doubleValue * 100),
+                change: "\(String(format: "%.2f%%", NSDecimalNumber(decimal: matchRateValueChange).doubleValue * 100)) (\(formatChange(value: matchRatePercentageChange)))",
+                isPositive: matchRatePercentageChange >= 0
+            ),
+            AdMetricData(
+                title: "eCPM",
+                value: formatter.string(from: lastTotalECPM as NSDecimalNumber) ?? "$0.00",
+                change: "\(formatter.string(from: eCPMValueChange as NSDecimalNumber) ?? "$0.00") (\(formatChange(value: eCPMPercentageChange)))",
+                isPositive: eCPMPercentageChange >= 0
+            ),
+            AdMetricData(
+                title: "Clicks",
+                value: "\(lastTotalClicks)",
+                change: "\(clicksValueChange) (\(formatChange(value: clicksPercentageChange)))",
+                isPositive: clicksPercentageChange >= 0
+            )
+        ]
+    }
+
+    // For Decimal type
+    private func percentageChange(current: Decimal, previous: Decimal) -> Decimal {
+        guard previous != 0 else { return 0 }
+        return (current - previous) / previous * 100
+    }
+
+    // For Int type
+    private func percentageChange(current: Int, previous: Int) -> Decimal {
+        guard previous != 0 else { return 0 }
+        return Decimal(current - previous) / Decimal(previous) * 100
+    }
+
+    // Helper function to format the change value as a string
+    private func formatChange(value: Decimal) -> String {
+        return String(format: value >= 0 ? "+%.2f%%" : "%.2f%%", NSDecimalNumber(decimal: value).doubleValue)
     }
 }

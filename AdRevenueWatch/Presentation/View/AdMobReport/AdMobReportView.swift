@@ -14,8 +14,10 @@ struct AdMobReportView: View {
 
     var body: some View {
         ZStack {
-            switch viewModel.viewState {
+            switch viewModel.state {
             case .fetchingAccounts:
+                ProgressView()
+            case .fetchingReport:
                 ProgressView()
             case .reports:
                 reportView
@@ -32,6 +34,21 @@ struct AdMobReportView: View {
                 if let totalEarningsData = viewModel.totalEarningsData {
                     TotalEarningsView(totalEarningsData: totalEarningsData)
                 }
+
+                HStack {
+                    Image(systemName: "calendar")
+                    Picker("Select a date range", selection: $viewModel.selectedDateRangeOption) {
+                        ForEach(AdMobReportViewModel.DateRangeOption.allCases) { option in
+                            Text(option.rawValue)
+                                .tag(option)
+                                .font(.callout)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    Spacer()
+                }
+                .padding(.horizontal)
+
                 if let adsMetricDatas = viewModel.adsMetricDatas {
                     AdsActivityPerformanceView(metrics: adsMetricDatas)
                 }
@@ -61,6 +78,9 @@ struct AdMobReportView: View {
                         await viewModel.fetchAdMobReport(accountID: selectedPublisherID)
                     }
                 }
+            }
+            .onChange(of: viewModel.selectedDateRangeOption) { _ in
+                viewModel.onChangeOfSelectedDateRangeOption()
             }
         }
     }
