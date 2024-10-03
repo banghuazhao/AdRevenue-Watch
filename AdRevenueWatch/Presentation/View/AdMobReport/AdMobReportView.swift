@@ -17,9 +17,7 @@ struct AdMobReportView: View {
             switch viewModel.state {
             case .fetchingAccounts:
                 ProgressView()
-            case .fetchingReport:
-                ProgressView()
-            case .reports:
+            case .fetchingReport, .reports:
                 reportView
             }
         }
@@ -30,27 +28,30 @@ struct AdMobReportView: View {
 
     var reportView: some View {
         NavigationStack {
-            ScrollView {
-                if let totalEarningsData = viewModel.totalEarningsData {
-                    TotalEarningsView(totalEarningsData: totalEarningsData)
-                }
+            ZStack {
+                if let totalEarningsData = viewModel.totalEarningsData,
+                   let adsMetricDatas = viewModel.adsMetricDatas {
+                    ScrollView {
+                        TotalEarningsView(totalEarningsData: totalEarningsData)
 
-                HStack {
-                    Image(systemName: "calendar")
-                    Picker("Select a date range", selection: $viewModel.selectedDateRangeOption) {
-                        ForEach(AdMobReportViewModel.DateRangeOption.allCases) { option in
-                            Text(option.rawValue)
-                                .tag(option)
-                                .font(.callout)
+                        HStack {
+                            Image(systemName: "calendar")
+                            Picker("Select a date range", selection: $viewModel.selectedDateRangeOption) {
+                                ForEach(AdMobReportViewModel.DateRangeOption.allCases) { option in
+                                    Text(option.rawValue)
+                                        .tag(option)
+                                        .font(.callout)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            Spacer()
                         }
-                    }
-                    .pickerStyle(.menu)
-                    Spacer()
-                }
-                .padding(.horizontal)
+                        .padding(.horizontal)
 
-                if let adsMetricDatas = viewModel.adsMetricDatas {
-                    AdsActivityPerformanceView(metrics: adsMetricDatas)
+                        AdsActivityPerformanceView(metrics: adsMetricDatas)
+                    }
+                } else {
+                    ProgressView()
                 }
             }
             .navigationTitle("AdMob Report")

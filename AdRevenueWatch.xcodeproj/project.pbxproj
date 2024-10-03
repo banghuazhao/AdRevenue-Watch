@@ -17,8 +17,6 @@
 		9972A7DE2C8DAAA10027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7DD2C8DAAA10027DBD2 /* Repository */; };
 		9972A7E12C8DAAC40027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7E02C8DAAC40027DBD2 /* Repository */; };
 		99A841CF2C8DAD3500D74617 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A841CE2C8DAD3500D74617 /* Dependency.swift */; };
-		99A841D32C8DBCD600D74617 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 99A841D02C8DBCD600D74617 /* Secret.xcconfig */; };
-		99A841D42C8DBCD600D74617 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 99A841D12C8DBCD600D74617 /* Release.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -153,7 +151,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					9972A7B02C8C62950027DBD2 = {
 						CreatedOnToolsVersion = 15.4;
@@ -188,10 +186,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99A841D42C8DBCD600D74617 /* Release.xcconfig in Resources */,
 				9972A7BC2C8C62970027DBD2 /* Preview Assets.xcassets in Resources */,
 				9972A7B92C8C62970027DBD2 /* Assets.xcassets in Resources */,
-				99A841D32C8DBCD600D74617 /* Secret.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

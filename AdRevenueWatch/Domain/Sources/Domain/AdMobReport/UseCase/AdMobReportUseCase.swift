@@ -7,7 +7,6 @@ import Foundation
 
 public protocol AdMobReportUseCaseProtocol {
     func fetchReport(
-        accessToken: String,
         accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity
@@ -15,18 +14,21 @@ public protocol AdMobReportUseCaseProtocol {
 
 public struct AdMobReportUseCase: AdMobReportUseCaseProtocol {
     private let adMobReportRepository: any AdMobReportRepositoryProtocol
+    private let accessTokenRepository: any AccessTokenRepositoryProtocol
 
     public init(
-        adMobReportRepository: some AdMobReportRepositoryProtocol
+        adMobReportRepository: some AdMobReportRepositoryProtocol,
+        accessTokenRepository: some AccessTokenRepositoryProtocol
     ) {
         self.adMobReportRepository = adMobReportRepository
+        self.accessTokenRepository = accessTokenRepository
     }
 
     public func fetchReport(
-        accessToken:
-        String, accountID: String,
+        accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity {
-        try await adMobReportRepository.fetchReport(accessToken: accessToken, accountID: accountID, reportRequest: reportRequest)
+        let accessToken = try accessTokenRepository.getAccessToken()
+        return try await adMobReportRepository.fetchReport(accessToken: accessToken, accountID: accountID, reportRequest: reportRequest)
     }
 }

@@ -8,11 +8,10 @@ import Foundation
 
 @MainActor
 class AdMobReportViewModel: ObservableObject {
-    private let accessToken: String
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
     private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
     private let adMobReportUseCase: any AdMobReportUseCaseProtocol
-    private let onLogout: () -> Void
+    private let sessionManager: SessionManager
 
     @Published var state: State = .fetchingAccounts
     enum State {
@@ -40,25 +39,22 @@ class AdMobReportViewModel: ObservableObject {
     @Published var adsMetricDatas: [AdMetricData]?
 
     init(
-        accessToken: String,
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
         adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase,
         adMobReportUseCase: some AdMobReportUseCaseProtocol = Dependency.adMobReportUseCase,
-        onLogout: @escaping () -> Void
-
+        sessionManager: SessionManager = Dependency.sessionManager
     ) {
-        self.accessToken = accessToken
         self.googleAuthUseCase = googleAuthUseCase
         self.adMobAccountUseCase = adMobAccountUseCase
         self.adMobReportUseCase = adMobReportUseCase
-        self.onLogout = onLogout
+        self.sessionManager = sessionManager
     }
 
     func onLoad() async {
         state = .fetchingAccounts
 
         do {
-            let adMobAccounts = try await adMobAccountUseCase.fetchAccounts(accessToken: accessToken)
+            let adMobAccounts = try await adMobAccountUseCase.fetchAccounts()
             adMobPublisherIDs = adMobAccounts.map(\.publisherID)
             selectedPublisherID = adMobPublisherIDs.first ?? ""
             await fetchAdMobReport(accountID: selectedPublisherID)
@@ -80,7 +76,6 @@ class AdMobReportViewModel: ObservableObject {
 
         do {
             adMobReportEntity = try await adMobReportUseCase.fetchReport(
-                accessToken: accessToken,
                 accountID: accountID,
                 reportRequest: reportRequest
             )
@@ -94,7 +89,7 @@ class AdMobReportViewModel: ObservableObject {
 
     func onTapLogout() async {
         await googleAuthUseCase.signOut()
-        onLogout()
+        sessionManager.refreshAuthenticationStatus()
     }
 
     func onChangeOfSelectedDateRangeOption() {
@@ -105,19 +100,15 @@ class AdMobReportViewModel: ObservableObject {
 
 extension AdMobReportEntity {
     func toTotalEarningData() -> TotalEarningData {
-        var todayEarnings: Decimal = 0
-        var yesterdayEarnings: Decimal = 0
+        let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
+        
+        var todayEarnings: Decimal = sortedDailyData.last?.estimatedEarnings ?? 0
+        var yesterdayEarnings: Decimal = sortedDailyData.dropLast().last?.estimatedEarnings ?? 0
         var thisMonthEarnings: Decimal = 0
         var lastMonthEarnings: Decimal = 0
 
         // Iterate over daily performances and categorize earnings
         for performance in dailyPerformances {
-            if isDateToday(performance.date) {
-                todayEarnings += performance.estimatedEarnings
-            }
-            if isDateYesterday(performance.date) {
-                yesterdayEarnings += performance.estimatedEarnings
-            }
             if isDateInCurrentMonth(performance.date) {
                 thisMonthEarnings += performance.estimatedEarnings
             }
@@ -193,18 +184,18 @@ extension AdMobReportEntity {
 extension AdMobReportEntity {
     func toAdsMetricDatas(dateRangeOption: AdMobReportViewModel.DateRangeOption) -> [AdMetricData] {
         let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
-        
+
         // Determine the range based on the selected option
         switch dateRangeOption {
         case .todaySoFar:
             return calculateMetricsForToday(sortedDailyData: sortedDailyData)
-            
+
         case .yesterdayVsLastWeek:
             return calculateMetricsForYesterdayVsSameDayLastWeek(sortedDailyData: sortedDailyData)
-            
+
         case .last7DaysVsPrevious7Days:
             return calculateMetricsForLast7DaysVsPrevious7Days(sortedDailyData: sortedDailyData)
-            
+
         case .last28DaysVsPrevious28Days:
             return calculateMetricsForLast28DaysVsPrevious28Days(sortedDailyData: sortedDailyData)
         }
@@ -216,22 +207,22 @@ extension AdMobReportEntity {
         while newData.count < 2 {
             newData.append(DailyAdPerformance.zero)
         }
-        
+
         let today = Array(newData.suffix(1))
         let yesterday = Array(newData.prefix(newData.count - 1).suffix(1))
-        
+
         return calculateComparisonMetrics(lastPeriod: today, previousPeriod: yesterday)
     }
-    
+
     private func calculateMetricsForYesterdayVsSameDayLastWeek(sortedDailyData: [DailyAdPerformance]) -> [AdMetricData] {
         var newData = sortedDailyData
         while newData.count < 9 {
             newData.append(DailyAdPerformance.zero)
         }
-        
+
         let yesterday = Array(newData.prefix(newData.count - 1).suffix(1))
         let sameDayLastWeek = Array(newData.prefix(newData.count - 1 - 7).suffix(1))
-        
+
         return calculateComparisonMetrics(lastPeriod: yesterday, previousPeriod: sameDayLastWeek)
     }
 
@@ -241,10 +232,10 @@ extension AdMobReportEntity {
         while newData.count < 15 {
             newData.append(DailyAdPerformance.zero)
         }
-        
+
         let last7Days = Array(newData.prefix(newData.count - 1).suffix(7))
         let previous7Days = Array(newData.prefix(newData.count - 1 - 7).suffix(7))
-        
+
         return calculateComparisonMetrics(lastPeriod: last7Days, previousPeriod: previous7Days)
     }
 
@@ -254,10 +245,10 @@ extension AdMobReportEntity {
         while newData.count < 57 {
             newData.append(DailyAdPerformance.zero)
         }
-        
+
         let last28Days = Array(newData.prefix(newData.count - 1).suffix(28))
         let previous28Days = Array(newData.prefix(newData.count - 1 - 28).suffix(28))
-        
+
         return calculateComparisonMetrics(lastPeriod: last28Days, previousPeriod: previous28Days)
     }
 
@@ -269,35 +260,35 @@ extension AdMobReportEntity {
         let lastTotalMatchRate = lastPeriod.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(lastPeriod.count)
         let lastTotalECPM = lastPeriod.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(lastPeriod.count)
         let lastTotalClicks = lastPeriod.reduce(0) { $0 + $1.clicks }
-        
+
         let previousTotalRequests = previousPeriod.reduce(0) { $0 + $1.adRequests }
         let previousTotalImpressions = previousPeriod.reduce(0) { $0 + $1.impressions }
         let previousTotalEarnings = previousPeriod.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
         let previousTotalMatchRate = previousPeriod.reduce(Decimal(0)) { $0 + $1.matchRate } / Decimal(previousPeriod.count)
         let previousTotalECPM = previousPeriod.reduce(Decimal(0)) { $0 + $1.eCPM } / Decimal(previousPeriod.count)
         let previousTotalClicks = previousPeriod.reduce(0) { $0 + $1.clicks }
-        
+
         let formatter = usdCurrencyFormatter()
-        
+
         // Calculate percentage and value changes
         let requestsValueChange = lastTotalRequests - previousTotalRequests
         let requestsPercentageChange = percentageChange(current: lastTotalRequests, previous: previousTotalRequests)
-        
+
         let impressionsValueChange = lastTotalImpressions - previousTotalImpressions
         let impressionsPercentageChange = percentageChange(current: lastTotalImpressions, previous: previousTotalImpressions)
-        
+
         let earningsValueChange = lastTotalEarnings - previousTotalEarnings
         let earningsPercentageChange = percentageChange(current: lastTotalEarnings, previous: previousTotalEarnings)
-        
+
         let matchRateValueChange = lastTotalMatchRate - previousTotalMatchRate
         let matchRatePercentageChange = percentageChange(current: lastTotalMatchRate, previous: previousTotalMatchRate)
-        
+
         let eCPMValueChange = lastTotalECPM - previousTotalECPM
         let eCPMPercentageChange = percentageChange(current: lastTotalECPM, previous: previousTotalECPM)
-        
+
         let clicksValueChange = lastTotalClicks - previousTotalClicks
         let clicksPercentageChange = percentageChange(current: lastTotalClicks, previous: previousTotalClicks)
-        
+
         // Format value changes and percentage changes together
         return [
             AdMetricData(
@@ -333,9 +324,9 @@ extension AdMobReportEntity {
             AdMetricData(
                 title: "Clicks",
                 value: lastTotalClicks.formatWithUnits,
-                change: "\(clicksValueChange) (\(formatChange(value: clicksPercentageChange)))",
+                change: "\(clicksValueChange.formatWithUnits) (\(formatChange(value: clicksPercentageChange)))",
                 isPositive: clicksPercentageChange >= 0
-            )
+            ),
         ]
     }
 
@@ -355,25 +346,35 @@ extension AdMobReportEntity {
     private func formatChange(value: Decimal) -> String {
         return String(format: value >= 0 ? "+%.2f%%" : "%.2f%%", NSDecimalNumber(decimal: value).doubleValue)
     }
-    
-
 }
 
 extension Int {
     var formatWithUnits: String {
         switch self {
-        case 100_000_000...:
-            return String(format: "%.0fM", Double(self) / 1_000_000)
-        case 10_000_000...:
-            return String(format: "%.1fM", Double(self) / 1_000_000)
-        case 1_000_000...:
-            return String(format: "%.2fM", Double(self) / 1_000_000)
-        case 100_000...:
-            return String(format: "%.0fK", Double(self) / 1_000)
-        case 10_000...:
-            return String(format: "%.1fK", Double(self) / 1_000)
-        case 1_000...:
-            return String(format: "%.2fK", Double(self) / 1_000)
+        case 100000000...:
+            return String(format: "%.0fM", Double(self) / 1000000)
+        case 10000000...:
+            return String(format: "%.1fM", Double(self) / 1000000)
+        case 1000000...:
+            return String(format: "%.2fM", Double(self) / 1000000)
+        case 100000...:
+            return String(format: "%.0fK", Double(self) / 1000)
+        case 10000...:
+            return String(format: "%.1fK", Double(self) / 1000)
+        case 1000...:
+            return String(format: "%.2fK", Double(self) / 1000)
+        case ...(-100000000):
+            return String(format: "%.0fM", Double(self) / 1000000)
+        case ...(-10000000):
+            return String(format: "%.1fM", Double(self) / 1000000)
+        case ...(-1000000):
+            return String(format: "%.2fM", Double(self) / 1000000)
+        case ...(-100000):
+            return String(format: "%.0fK", Double(self) / 1000)
+        case ...(-10000):
+            return String(format: "%.1fK", Double(self) / 1000)
+        case ...(-1000):
+            return String(format: "%.2fK", Double(self) / 1000)
         default:
             return "\(self)"
         }

@@ -10,39 +10,46 @@ import Repository
 enum Dependency {
     static var googleAuthUseCase: some GoogleAuthUseCaseProtocol {
         GoogleAuthUseCase(
-            googleAuthRepository: GoogleAuthRepository.newRepo
+            googleAuthRepository: GoogleAuthRepository.newRepo,
+            accessTokenRepository: KeychainAccessTokenRepository()
         )
     }
 
     static var adMobAccountUseCase: some AdMobAccountUseCaseProtocol {
         AdMobAccountUseCase(
-            adMobAccountRepository: AdMobAccountRepository.newRepo
+            adMobAccountRepository: AdMobAccountRepository.newRepo,
+            accessTokenRepository: KeychainAccessTokenRepository()
         )
     }
 
     static var adMobReportUseCase: some AdMobReportUseCaseProtocol {
         AdMobReportUseCase(
-            adMobReportRepository: AdMobReportRepository.newRepo
+            adMobReportRepository: AdMobReportRepository.newRepo,
+            accessTokenRepository: KeychainAccessTokenRepository()
         )
     }
 
-    static let appViewModel = AppViewModel()
+    static var accessTokenUseCase: some AccessTokenUseCaseProtocol {
+        AccessTokenUseCase(
+            repository: KeychainAccessTokenRepository()
+        )
+    }
+
+    static let sessionManager = SessionManager(accessTokenUseCase: accessTokenUseCase)
+
+    static let appViewModel = AppViewModel(sessionManager: sessionManager)
 
     @MainActor static var onboardingViewModel: OnboardingViewModel {
         OnboardingViewModel(
-            googleAuthUseCase: googleAuthUseCase) { accessToken in
-                appViewModel.onLogin(accessToken: accessToken)
-            }
+            googleAuthUseCase: googleAuthUseCase
+        )
     }
 
-    @MainActor static func adMobViewModel(accessToken: String) -> AdMobReportViewModel {
+    @MainActor static var adMobViewModel: AdMobReportViewModel {
         AdMobReportViewModel(
-            accessToken: accessToken,
             googleAuthUseCase: googleAuthUseCase,
             adMobAccountUseCase: adMobAccountUseCase,
             adMobReportUseCase: adMobReportUseCase
-        ) {
-            appViewModel.onLogout()
-        }
+        )
     }
 }

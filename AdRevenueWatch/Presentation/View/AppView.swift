@@ -19,11 +19,14 @@ struct AppView: View {
                 OnboardingView(
                     viewModel: Dependency.onboardingViewModel
                 )
-            case let .adMobReport(accessToken):
+            case .adMobReport:
                 AdMobReportView(
-                    viewModel: Dependency.adMobViewModel(accessToken: accessToken)
+                    viewModel: Dependency.adMobViewModel
                 )
             }
+        }
+        .task {
+            await viewModel.monitorLoginStatue()
         }
     }
 }

@@ -8,16 +8,20 @@ import Foundation
 class AppViewModel: ObservableObject {
     enum State {
         case onboarding
-        case adMobReport(accessToken: String)
+        case adMobReport
     }
 
     @Published var state: State = .onboarding
+    @Published var sessionManager: SessionManager
 
-    func onLogin(accessToken: String) {
-        state = .adMobReport(accessToken: accessToken)
+    init(sessionManager: SessionManager) {
+        self.sessionManager = sessionManager
     }
 
-    func onLogout() {
-        state = .onboarding
+    @MainActor
+    func monitorLoginStatue() async {
+        for await isLoggedIn in sessionManager.isLoggedInStream() {
+            state = isLoggedIn ? .adMobReport : .onboarding
+        }
     }
 }
