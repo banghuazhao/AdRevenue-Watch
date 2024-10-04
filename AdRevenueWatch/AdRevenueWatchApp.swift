@@ -9,11 +9,11 @@ import SwiftUI
 @main
 struct AdRevenueWatchApp: App {
     init() {
-        guard let GIDClientID = ProcessInfo.processInfo.environment["GIDCLIENTID"] else {
-            fatalError("GIDCLIENTID is not set")
-        }
-        let config = GIDConfiguration(clientID: GIDClientID)
-        GIDSignIn.sharedInstance.configuration = config
+//        guard let GIDClientID = ProcessInfo.processInfo.environment["GIDCLIENTID"] else {
+//            fatalError("GIDCLIENTID is not set")
+//        }
+//        let config = GIDConfiguration(clientID: GIDClientID)
+//        GIDSignIn.sharedInstance.configuration = config
     }
 
     var body: some Scene {
