@@ -13,6 +13,8 @@ jobs:
   test:
     name: Run Unit Tests
     runs-on: macos-latest
+    environment: GIDClientID
+
     strategy:
       matrix:
         xcode-version: ['16.0']
