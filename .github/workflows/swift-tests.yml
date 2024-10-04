@@ -40,4 +40,5 @@ jobs:
           -scheme AdRevenueWatch \
           -destination 'platform=iOS Simulator,name=iPhone 16,OS=${{ matrix.ios-version }}' \
           -configuration Debug \
+          GIDCLIENTID="${GIDCLIENTID}" \
           CODE_SIGNING_ALLOWED=NO
