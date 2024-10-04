@@ -13,7 +13,7 @@ jobs:
   test:
     name: Run Unit Tests
     runs-on: macos-latest
-    secrets: inherit
+    environment: GIDClientID
 
     strategy:
       matrix:
