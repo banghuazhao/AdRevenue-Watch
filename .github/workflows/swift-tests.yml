@@ -30,7 +30,7 @@ jobs:
 
       - name: Build and Test
         env:
-          GIDClientID: ${{ secrets.GIDCLIENTID }}
+          GIDCLIENTID: ${{ secrets.GIDCLIENTID }}
         run: |
           xcodebuild clean build test \
           -scheme AdRevenueWatch \
