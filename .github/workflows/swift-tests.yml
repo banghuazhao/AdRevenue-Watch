@@ -31,7 +31,9 @@ jobs:
       - name: Build and Test
         env:
           GIDCLIENTID: ${{ secrets.GIDCLIENTID }}
+          TEST: ${{ secrets.TEST }}
         run: |
+          echo "TEST: $TEST" # for debug purpose
           xcodebuild clean build test \
           -scheme AdRevenueWatch \
           -destination 'platform=iOS Simulator,name=iPhone 16,OS=${{ matrix.ios-version }}' \
