@@ -13,7 +13,6 @@ jobs:
   test:
     name: Run Unit Tests
     runs-on: macos-latest
-
     strategy:
       matrix:
         xcode-version: ['16.0']
@@ -33,10 +32,10 @@ jobs:
           GIDCLIENTID: ${{ secrets.GIDCLIENTID }}
           TEST_VAR: ${{ vars.TEST_VAR }}
         run: |
-          echo "GIDCLIENTID: $GIDCLIENTID" \
-          echo "TEST_VAR: $TEST_VAR" \
+          echo "GIDCLIENTID: $GIDCLIENTID"
+          echo "TEST_VAR: $TEST_VAR" # for debug purpose
           xcodebuild clean build test \
           -scheme AdRevenueWatch \
-          -destination 'platform=iOS Simulator,name=iPhone 15,OS=${{ matrix.ios-version }}' \
+          -destination 'platform=iOS Simulator,name=iPhone 16,OS=${{ matrix.ios-version }}' \
           -configuration Debug \
           CODE_SIGNING_ALLOWED=NO
