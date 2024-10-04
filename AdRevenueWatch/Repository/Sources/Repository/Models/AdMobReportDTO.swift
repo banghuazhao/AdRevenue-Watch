@@ -6,10 +6,16 @@
 import Foundation
 
 // Root structure representing an array with one header, multiple rows, and one footer
-struct AdMobReportDTO: Codable, CustomStringConvertible {
+struct AdMobReportDTO: Codable {
     let header: HeaderData
     public let rows: [RowData]
     let footer: FooterData
+    
+    init(header: HeaderData, rows: [RowData], footer: FooterData) {
+        self.header = header
+        self.rows = rows
+        self.footer = footer
+    }
 
     // Custom decoding to handle the [header, row, row, ..., footer] structure
     public init(from decoder: Decoder) throws {
@@ -33,17 +39,6 @@ struct AdMobReportDTO: Codable, CustomStringConvertible {
         // The last element is the footer, which is inside a wrapper object
         let footerWrapper = try container.decode(FooterWrapper.self)
         footer = footerWrapper.footer
-    }
-
-    public var description: String {
-        var descriptionString = "\nAdMob Report:\n"
-        descriptionString += "\nHeader:\n\(header.description)\n"
-        descriptionString += "\nRows:\n"
-        for (index, row) in rows.enumerated() {
-            descriptionString += "\nRow \(index + 1):\n\(row.description)\n"
-        }
-        descriptionString += "Footer:\n\(footer.description)\n"
-        return descriptionString
     }
 }
 

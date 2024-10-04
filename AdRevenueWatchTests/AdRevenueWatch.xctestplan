@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "6E3C51CA-0205-43BA-880C-38FC2923A23C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:AdRevenueWatch\/Repository",
+        "identifier" : "RepositoryTests",
+        "name" : "RepositoryTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:AdRevenueWatch.xcodeproj",
+        "identifier" : "99FB734C2CAF730200924669",
+        "name" : "AdRevenueWatchTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:AdRevenueWatch\/Domain",
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}

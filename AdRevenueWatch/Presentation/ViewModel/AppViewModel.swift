@@ -12,15 +12,15 @@ class AppViewModel: ObservableObject {
     }
 
     @Published var state: State = .onboarding
-    @Published var sessionManager: SessionManager
+    @Published var sessionManager: any SessionManagerProtocol
 
-    init(sessionManager: SessionManager) {
+    init(sessionManager: some SessionManagerProtocol) {
         self.sessionManager = sessionManager
     }
 
     @MainActor
-    func monitorLoginStatue() async {
-        for await isLoggedIn in sessionManager.isLoggedInStream() {
+    func monitorLoginStatus() async {
+        for await isLoggedIn in sessionManager.isLoggedInStream {
             state = isLoggedIn ? .adMobReport : .onboarding
         }
     }

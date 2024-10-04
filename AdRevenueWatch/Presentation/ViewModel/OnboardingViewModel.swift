@@ -9,7 +9,7 @@ import UIKit
 
 @MainActor
 class OnboardingViewModel: ObservableObject {
-    private let sessionManager: SessionManager
+    private let sessionManager: any SessionManagerProtocol
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
 
     enum ViewState {
@@ -20,7 +20,7 @@ class OnboardingViewModel: ObservableObject {
     @Published var viewState: ViewState = .loading
 
     init(
-        sessionManager: SessionManager = Dependency.sessionManager,
+        sessionManager: some SessionManagerProtocol = Dependency.sessionManager,
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase
     ) {
         self.sessionManager = sessionManager

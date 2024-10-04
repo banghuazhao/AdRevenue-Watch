@@ -26,7 +26,7 @@ struct AppView: View {
             }
         }
         .task {
-            await viewModel.monitorLoginStatue()
+            await viewModel.monitorLoginStatus()
         }
     }
 }

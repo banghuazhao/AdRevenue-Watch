@@ -41,7 +41,7 @@ extension AdMobReportRequestEntity {
     }
     
     // Helper function to map Date to DateSpec
-    private func mapDateToDateSpec(date: Date) -> DateSpec {
+    func mapDateToDateSpec(date: Date) -> DateSpec {
         let calendar = Calendar.current
         let year = calendar.component(.year, from: date)
         let month = calendar.component(.month, from: date)

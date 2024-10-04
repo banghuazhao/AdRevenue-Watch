@@ -20,3 +20,7 @@ struct DateSpec: Codable, CustomStringConvertible {
         return "\(year)-\(month)-\(day)"
     }
 }
+
+extension DateSpec: Equatable {
+    
+}

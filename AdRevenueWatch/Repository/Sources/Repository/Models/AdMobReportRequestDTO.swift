@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct AdMobReportRequestDTO: Codable, CustomStringConvertible {
+public struct AdMobReportRequestDTO: Codable {
     let reportSpec: ReportSpec
 
     enum CodingKeys: String, CodingKey {
@@ -14,13 +14,6 @@ public struct AdMobReportRequestDTO: Codable, CustomStringConvertible {
 
     public init(reportSpec: ReportSpec) {
         self.reportSpec = reportSpec
-    }
-
-    public var description: String {
-        return """
-        AdMobNetworkReportRequestEntity:
-        Report Spec: \(reportSpec)
-        """
     }
 }
 

@@ -11,7 +11,7 @@ class AdMobReportViewModel: ObservableObject {
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
     private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
     private let adMobReportUseCase: any AdMobReportUseCaseProtocol
-    private let sessionManager: SessionManager
+    private let sessionManager: any SessionManagerProtocol
 
     @Published var state: State = .fetchingAccounts
     enum State {
@@ -42,7 +42,7 @@ class AdMobReportViewModel: ObservableObject {
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
         adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase,
         adMobReportUseCase: some AdMobReportUseCaseProtocol = Dependency.adMobReportUseCase,
-        sessionManager: SessionManager = Dependency.sessionManager
+        sessionManager: some SessionManagerProtocol = Dependency.sessionManager
     ) {
         self.googleAuthUseCase = googleAuthUseCase
         self.adMobAccountUseCase = adMobAccountUseCase
@@ -102,8 +102,8 @@ extension AdMobReportEntity {
     func toTotalEarningData() -> TotalEarningData {
         let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
         
-        var todayEarnings: Decimal = sortedDailyData.last?.estimatedEarnings ?? 0
-        var yesterdayEarnings: Decimal = sortedDailyData.dropLast().last?.estimatedEarnings ?? 0
+        let todayEarnings: Decimal = sortedDailyData.last?.estimatedEarnings ?? 0
+        let yesterdayEarnings: Decimal = sortedDailyData.dropLast().last?.estimatedEarnings ?? 0
         var thisMonthEarnings: Decimal = 0
         var lastMonthEarnings: Decimal = 0
 

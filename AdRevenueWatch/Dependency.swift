@@ -35,7 +35,7 @@ enum Dependency {
         )
     }
 
-    static let sessionManager = SessionManager(accessTokenUseCase: accessTokenUseCase)
+    static let sessionManager: some SessionManagerProtocol = SessionManager(accessTokenUseCase: accessTokenUseCase)
 
     static let appViewModel = AppViewModel(sessionManager: sessionManager)
 

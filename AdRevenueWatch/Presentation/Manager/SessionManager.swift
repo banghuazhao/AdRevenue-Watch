@@ -7,11 +7,24 @@ import Combine
 import Domain
 import Foundation
 
-class SessionManager: ObservableObject {    
-    @Published private var isLoggedIn: Bool = false
+protocol SessionManagerProtocol {
+    var isLoggedInStream: AsyncStream<Bool> { get }
+    func refreshAuthenticationStatus()
+}
 
+class SessionManager: SessionManagerProtocol, ObservableObject {
     private let accessTokenUseCase: AccessTokenUseCaseProtocol
-    private var cancellable: AnyCancellable? // Store the cancellable instance
+    private var continuation: AsyncStream<Bool>.Continuation?
+
+    var isLoggedInStream: AsyncStream<Bool> {
+        AsyncStream { continuation in
+            self.continuation = continuation
+
+            continuation.onTermination = { _ in
+                self.continuation = nil
+            }
+        }
+    }
 
     init(accessTokenUseCase: AccessTokenUseCaseProtocol) {
         self.accessTokenUseCase = accessTokenUseCase
@@ -20,23 +33,9 @@ class SessionManager: ObservableObject {
     func refreshAuthenticationStatus() {
         do {
             _ = try accessTokenUseCase.getAccessToken()
-            isLoggedIn = true
+            continuation?.yield(true)
         } catch {
-            isLoggedIn = false
-        }
-    }
-
-    func isLoggedInStream() -> AsyncStream<Bool> {
-        AsyncStream { continuation in
-            self.cancellable = $isLoggedIn
-                .removeDuplicates()
-                .sink { value in
-                    continuation.yield(value)
-                }
-
-            continuation.onTermination = { _ in
-                self.cancellable?.cancel()
-            }
+            continuation?.yield(false)
         }
     }
 }

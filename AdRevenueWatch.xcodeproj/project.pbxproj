@@ -19,6 +19,16 @@
 		99A841CF2C8DAD3500D74617 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A841CE2C8DAD3500D74617 /* Dependency.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		99FB73512CAF730200924669 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9972A7A92C8C62950027DBD2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9972A7B02C8C62950027DBD2;
+			remoteInfo = AdRevenueWatch;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		9972A7B12C8C62950027DBD2 /* AdRevenueWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdRevenueWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9972A7B42C8C62950027DBD2 /* AdRevenueWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdRevenueWatchApp.swift; sourceTree = "<group>"; };
@@ -31,10 +41,22 @@
 		99A841D02C8DBCD600D74617 /* Secret.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		99A841D12C8DBCD600D74617 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		99A841D72C8DBDCA00D74617 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		99FB734D2CAF730200924669 /* AdRevenueWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdRevenueWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		99FB73572CAF74C000924669 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AdRevenueWatch.xctestplan,
+			);
+			target = 99FB734C2CAF730200924669 /* AdRevenueWatchTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		99FB73262CA96A3D00924669 /* Presentation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Presentation; sourceTree = "<group>"; };
+		99FB734E2CAF730200924669 /* AdRevenueWatchTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (99FB73572CAF74C000924669 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AdRevenueWatchTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +73,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		99FB734A2CAF730200924669 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -58,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				9972A7B32C8C62950027DBD2 /* AdRevenueWatch */,
+				99FB734E2CAF730200924669 /* AdRevenueWatchTests */,
 				9972A7B22C8C62950027DBD2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				9972A7B12C8C62950027DBD2 /* AdRevenueWatch.app */,
+				99FB734D2CAF730200924669 /* AdRevenueWatchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -143,6 +174,29 @@
 			productReference = 9972A7B12C8C62950027DBD2 /* AdRevenueWatch.app */;
 			productType = "com.apple.product-type.application";
 		};
+		99FB734C2CAF730200924669 /* AdRevenueWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 99FB73532CAF730200924669 /* Build configuration list for PBXNativeTarget "AdRevenueWatchTests" */;
+			buildPhases = (
+				99FB73492CAF730200924669 /* Sources */,
+				99FB734A2CAF730200924669 /* Frameworks */,
+				99FB734B2CAF730200924669 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				99FB73522CAF730200924669 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				99FB734E2CAF730200924669 /* AdRevenueWatchTests */,
+			);
+			name = AdRevenueWatchTests;
+			packageProductDependencies = (
+			);
+			productName = AdRevenueWatchTests;
+			productReference = 99FB734D2CAF730200924669 /* AdRevenueWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -150,11 +204,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1540;
+				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					9972A7B02C8C62950027DBD2 = {
 						CreatedOnToolsVersion = 15.4;
+					};
+					99FB734C2CAF730200924669 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 9972A7B02C8C62950027DBD2;
 					};
 				};
 			};
@@ -177,6 +235,7 @@
 			projectRoot = "";
 			targets = (
 				9972A7B02C8C62950027DBD2 /* AdRevenueWatch */,
+				99FB734C2CAF730200924669 /* AdRevenueWatchTests */,
 			);
 		};
 /* End PBXProject section */
@@ -188,6 +247,13 @@
 			files = (
 				9972A7BC2C8C62970027DBD2 /* Preview Assets.xcassets in Resources */,
 				9972A7B92C8C62970027DBD2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99FB734B2CAF730200924669 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,7 +269,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		99FB73492CAF730200924669 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		99FB73522CAF730200924669 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9972A7B02C8C62950027DBD2 /* AdRevenueWatch */;
+			targetProxy = 99FB73512CAF730200924669 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		9972A7BD2C8C62970027DBD2 /* Debug */ = {
@@ -391,6 +472,44 @@
 			};
 			name = Release;
 		};
+		99FB73542CAF730200924669 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F694X76A5X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appsbay.AdRevenueWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdRevenueWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AdRevenueWatch";
+			};
+			name = Debug;
+		};
+		99FB73552CAF730200924669 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F694X76A5X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appsbay.AdRevenueWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdRevenueWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AdRevenueWatch";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -408,6 +527,15 @@
 			buildConfigurations = (
 				9972A7C02C8C62970027DBD2 /* Debug */,
 				9972A7C12C8C62970027DBD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		99FB73532CAF730200924669 /* Build configuration list for PBXNativeTarget "AdRevenueWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				99FB73542CAF730200924669 /* Debug */,
+				99FB73552CAF730200924669 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
