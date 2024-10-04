@@ -28,10 +28,6 @@ jobs:
         with:
           xcode-version: ${{ matrix.xcode-version }}
 
-      - name: Install dependencies
-        run: |
-          swift package resolve # If you are using Swift Package Manager
-
       - name: Build and Test
         run: |
           xcodebuild clean build test \
