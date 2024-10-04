@@ -33,9 +33,9 @@ jobs:
           GIDCLIENTID: ${{ secrets.GIDCLIENTID }}
           TEST_VAR: ${{ vars.TEST_VAR }}
         run: |
+          echo "GIDCLIENTID: $GIDCLIENTID" \
+          echo "TEST_VAR: $TEST_VAR" \
           xcodebuild clean build test \
-          echo "GIDCLIENTID: $GIDCLIENTID"
-          echo "TEST_VAR: $TEST_VAR"
           -scheme AdRevenueWatch \
           -destination 'platform=iOS Simulator,name=iPhone 15,OS=${{ matrix.ios-version }}' \
           -configuration Debug \
