@@ -34,6 +34,7 @@ jobs:
           TEST: ${{ secrets.TEST }}
         run: |
           echo "TEST: $TEST" # for debug purpose
+          env  # This will print all environment variables available
           xcodebuild clean build test \
           -scheme AdRevenueWatch \
           -destination 'platform=iOS Simulator,name=iPhone 16,OS=${{ matrix.ios-version }}' \
