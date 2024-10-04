@@ -29,6 +29,8 @@ jobs:
           xcode-version: ${{ matrix.xcode-version }}
 
       - name: Build and Test
+        env:
+          GIDClientID: ${{ secrets.GIDCLIENTID }}
         run: |
           xcodebuild clean build test \
           -scheme AdRevenueWatch \

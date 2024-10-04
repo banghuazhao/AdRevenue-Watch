@@ -38,7 +38,6 @@
 		9972A7D42C8DA2580027DBD2 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
 		9972A7E22C8DAACB0027DBD2 /* Repository */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Repository; sourceTree = "<group>"; };
 		99A841CE2C8DAD3500D74617 /* Dependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependency.swift; sourceTree = "<group>"; };
-		99A841D02C8DBCD600D74617 /* Secret.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		99A841D12C8DBCD600D74617 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		99A841D72C8DBDCA00D74617 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		99FB734D2CAF730200924669 /* AdRevenueWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdRevenueWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,7 +135,6 @@
 		99A841D22C8DBCD600D74617 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				99A841D02C8DBCD600D74617 /* Secret.xcconfig */,
 				99A841D72C8DBDCA00D74617 /* Debug.xcconfig */,
 				99A841D12C8DBCD600D74617 /* Release.xcconfig */,
 			);
@@ -289,7 +287,6 @@
 /* Begin XCBuildConfiguration section */
 		9972A7BD2C8C62970027DBD2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 99A841D02C8DBCD600D74617 /* Secret.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -353,7 +350,6 @@
 		};
 		9972A7BE2C8C62970027DBD2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 99A841D02C8DBCD600D74617 /* Secret.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -419,6 +415,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AdRevenueWatch/Supportings/Preview Content\"";
 				DEVELOPMENT_TEAM = F694X76A5X;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AdRevenueWatch/Supportings/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -432,6 +429,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appsbay.AdRevenueWatch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -451,6 +449,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AdRevenueWatch/Supportings/Preview Content\"";
 				DEVELOPMENT_TEAM = F694X76A5X;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AdRevenueWatch/Supportings/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -464,6 +463,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appsbay.AdRevenueWatch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

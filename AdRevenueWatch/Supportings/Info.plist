@@ -2,14 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>GIDClientID</key>
-	<string>$(GIDClientID)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>$(GOOGLE_REDIRECT_URL_SCHEMES)</string>
+				<string>com.googleusercontent.apps.48838700100-8o0jclvbc2oiffq0t1hl1lm6i0k9mipd</string>
 			</array>
 		</dict>
 	</array>
