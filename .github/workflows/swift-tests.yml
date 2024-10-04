@@ -13,6 +13,7 @@ jobs:
   test:
     name: Run Unit Tests
     runs-on: macos-latest
+    secrets: inherit
 
     strategy:
       matrix:
