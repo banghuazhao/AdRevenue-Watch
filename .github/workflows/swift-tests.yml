@@ -35,7 +35,7 @@ jobs:
         run: |
           xcodebuild clean build test \
           -scheme AdRevenueWatch \
-          -destination 'platform=iOS Simulator,name=iPhone 16,OS=${{ matrix.ios-version }}' \
+          -destination 'platform=iOS Simulator,name=iPhone 15,OS=${{ matrix.ios-version }}' \
           -configuration Debug \
           GIDCLIENTID="${GIDCLIENTID}" \
           CODE_SIGNING_ALLOWED=NO
