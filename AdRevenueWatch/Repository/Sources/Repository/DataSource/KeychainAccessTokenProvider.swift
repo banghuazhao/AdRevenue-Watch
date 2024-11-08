@@ -9,7 +9,7 @@ import Foundation
 import Domain
 import Security
 
-public struct KeychainAccessTokenRepository: AccessTokenRepositoryProtocol {
+public struct KeychainAccessTokenProvider: AccessTokenProvider {
     private let serviceName = "com.adRevenueWatch.accessToken"
     
     public init() {}

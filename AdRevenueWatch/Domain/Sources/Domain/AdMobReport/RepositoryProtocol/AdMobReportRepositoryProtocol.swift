@@ -8,7 +8,6 @@ import UIKit
 
 public protocol AdMobReportRepositoryProtocol {
     func fetchReport(
-        accessToken: String,
         accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity

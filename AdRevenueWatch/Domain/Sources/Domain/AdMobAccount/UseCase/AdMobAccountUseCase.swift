@@ -11,16 +11,12 @@ public protocol AdMobAccountUseCaseProtocol {
 
 public struct AdMobAccountUseCase: AdMobAccountUseCaseProtocol {
     private let adMobAccountRepository: any AdMobAccountRepositoryProtocol
-    private let accessTokenRepository: any AccessTokenRepositoryProtocol
     public init(
-        adMobAccountRepository: some AdMobAccountRepositoryProtocol,
-        accessTokenRepository: some AccessTokenRepositoryProtocol
+        adMobAccountRepository: some AdMobAccountRepositoryProtocol
     ) {
         self.adMobAccountRepository = adMobAccountRepository
-        self.accessTokenRepository = accessTokenRepository
     }
     public func fetchAccounts() async throws -> [AdMobAccountEntity] {
-        let accessToken = try accessTokenRepository.getAccessToken()
-        return try await adMobAccountRepository.fetchAccounts(accessToken: accessToken)
+        try await adMobAccountRepository.fetchAccounts()
     }
 }

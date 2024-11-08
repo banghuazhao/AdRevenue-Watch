@@ -7,5 +7,5 @@
 import Foundation
 
 public protocol AdMobAccountRepositoryProtocol {
-    func fetchAccounts(accessToken: String) async throws -> [AdMobAccountEntity]
+    func fetchAccounts() async throws -> [AdMobAccountEntity]
 }

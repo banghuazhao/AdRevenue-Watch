@@ -8,24 +8,26 @@ import Foundation
 
 public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
     public static var newRepo: some AdMobReportRepositoryProtocol {
-        AdMobReportRepository(urlSession: .shared)
+        AdMobReportRepository(
+            networkSession: AuthenticatedURLSession(
+                accessTokenProvider: KeychainAccessTokenProvider()
+            )
+        )
     }
 
-    private let urlSession: URLSession
+    private let networkSession: NetworkSession
 
-    public init(urlSession: URLSession) {
-        self.urlSession = urlSession
+    public init(networkSession: NetworkSession) {
+        self.networkSession = networkSession
     }
 
     public func fetchReport(
-        accessToken: String,
         accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity {
         let url = URL(string: "https://admob.googleapis.com/v1/accounts/\(accountID)/networkReport:generate")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let reportRequestDTO = reportRequest.toAdMobReportRequestDTO()
@@ -33,7 +35,7 @@ public struct AdMobReportRepository: AdMobReportRepositoryProtocol {
         let jsonData = try JSONEncoder().encode(reportRequestDTO)
         request.httpBody = jsonData
 
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response) = try await networkSession.data(for: request)
 
         // Check for valid response
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {

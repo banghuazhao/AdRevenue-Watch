@@ -14,21 +14,17 @@ public protocol AdMobReportUseCaseProtocol {
 
 public struct AdMobReportUseCase: AdMobReportUseCaseProtocol {
     private let adMobReportRepository: any AdMobReportRepositoryProtocol
-    private let accessTokenRepository: any AccessTokenRepositoryProtocol
 
     public init(
-        adMobReportRepository: some AdMobReportRepositoryProtocol,
-        accessTokenRepository: some AccessTokenRepositoryProtocol
+        adMobReportRepository: some AdMobReportRepositoryProtocol
     ) {
         self.adMobReportRepository = adMobReportRepository
-        self.accessTokenRepository = accessTokenRepository
     }
 
     public func fetchReport(
         accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity {
-        let accessToken = try accessTokenRepository.getAccessToken()
-        return try await adMobReportRepository.fetchReport(accessToken: accessToken, accountID: accountID, reportRequest: reportRequest)
+        return try await adMobReportRepository.fetchReport(accountID: accountID, reportRequest: reportRequest)
     }
 }

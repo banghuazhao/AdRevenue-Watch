@@ -31,11 +31,6 @@ class SessionManager: SessionManagerProtocol, ObservableObject {
     }
 
     func refreshAuthenticationStatus() {
-        do {
-            _ = try accessTokenUseCase.getAccessToken()
-            continuation?.yield(true)
-        } catch {
-            continuation?.yield(false)
-        }
+        continuation?.yield(accessTokenUseCase.hasAccessToken)
     }
 }

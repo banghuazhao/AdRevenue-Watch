@@ -11,31 +11,31 @@ enum Dependency {
     static var googleAuthUseCase: some GoogleAuthUseCaseProtocol {
         GoogleAuthUseCase(
             googleAuthRepository: GoogleAuthRepository.newRepo,
-            accessTokenRepository: KeychainAccessTokenRepository()
+            accessTokenProvider: KeychainAccessTokenProvider()
         )
     }
 
     static var adMobAccountUseCase: some AdMobAccountUseCaseProtocol {
         AdMobAccountUseCase(
-            adMobAccountRepository: AdMobAccountRepository.newRepo,
-            accessTokenRepository: KeychainAccessTokenRepository()
+            adMobAccountRepository: AdMobAccountRepository.newRepo
         )
     }
 
     static var adMobReportUseCase: some AdMobReportUseCaseProtocol {
         AdMobReportUseCase(
-            adMobReportRepository: AdMobReportRepository.newRepo,
-            accessTokenRepository: KeychainAccessTokenRepository()
+            adMobReportRepository: AdMobReportRepository.newRepo
         )
     }
-
+    
     static var accessTokenUseCase: some AccessTokenUseCaseProtocol {
         AccessTokenUseCase(
-            repository: KeychainAccessTokenRepository()
+            accessTokenProvider: KeychainAccessTokenProvider()
         )
     }
 
-    static let sessionManager: some SessionManagerProtocol = SessionManager(accessTokenUseCase: accessTokenUseCase)
+    static let sessionManager: some SessionManagerProtocol = SessionManager(
+        accessTokenUseCase: accessTokenUseCase
+    )
 
     static let appViewModel = AppViewModel(sessionManager: sessionManager)
 

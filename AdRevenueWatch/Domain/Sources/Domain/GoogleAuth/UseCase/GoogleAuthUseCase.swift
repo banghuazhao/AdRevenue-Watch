@@ -15,20 +15,20 @@ public protocol GoogleAuthUseCaseProtocol {
 
 public struct GoogleAuthUseCase: GoogleAuthUseCaseProtocol {
     private let googleAuthRepository: any GoogleAuthRepositoryProtocol
-    private let accessTokenRepository: any AccessTokenRepositoryProtocol
+    private let accessTokenProvider: any AccessTokenProvider
 
     public init(
         googleAuthRepository: some GoogleAuthRepositoryProtocol,
-        accessTokenRepository: some AccessTokenRepositoryProtocol
+        accessTokenProvider: some AccessTokenProvider
     ) {
         self.googleAuthRepository = googleAuthRepository
-        self.accessTokenRepository = accessTokenRepository
+        self.accessTokenProvider = accessTokenProvider
     }
 
     @MainActor
     public func signIn(presentingViewController: UIViewController) async throws {
         let googleUserEntity = try await googleAuthRepository.signIn(presentingViewController: presentingViewController)
-        try accessTokenRepository.saveAccessToken(googleUserEntity.accessToken)
+        try accessTokenProvider.saveAccessToken(googleUserEntity.accessToken)
     }
 
     public func hasPreviousSignIn() -> Bool {
@@ -37,11 +37,11 @@ public struct GoogleAuthUseCase: GoogleAuthUseCaseProtocol {
 
     public func restorePreviousSignIn() async throws {
         let googleUserEntity = try await googleAuthRepository.restorePreviousSignIn()
-        try accessTokenRepository.saveAccessToken(googleUserEntity.accessToken)
+        try accessTokenProvider.saveAccessToken(googleUserEntity.accessToken)
     }
 
     public func signOut() async {
         await googleAuthRepository.signOut()
-        try? accessTokenRepository.deleteAccessToken()
+        try? accessTokenProvider.deleteAccessToken()
     }
 }

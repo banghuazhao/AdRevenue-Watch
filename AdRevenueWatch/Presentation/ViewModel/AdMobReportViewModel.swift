@@ -8,22 +8,11 @@ import Foundation
 
 @MainActor
 class AdMobReportViewModel: ObservableObject {
-    private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
-    private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
-    private let adMobReportUseCase: any AdMobReportUseCaseProtocol
-    private let sessionManager: any SessionManagerProtocol
-
-    @Published var state: State = .fetchingAccounts
     enum State {
         case fetchingAccounts
         case fetchingReport
         case reports
     }
-
-    @Published var adMobPublisherIDs: [String] = []
-    @Published var selectedPublisherID: String = ""
-    @Published var adMobReportEntity: AdMobReportEntity?
-    @Published var totalEarningsData: TotalEarningData?
 
     enum DateRangeOption: String, CaseIterable, Identifiable {
         case todaySoFar = "Today so far"
@@ -33,10 +22,19 @@ class AdMobReportViewModel: ObservableObject {
 
         var id: String { rawValue }
     }
+    
+    private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
+    private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
+    private let adMobReportUseCase: any AdMobReportUseCaseProtocol
+    private let sessionManager: any SessionManagerProtocol
 
+    @Published private(set) var state: State = .fetchingAccounts
+    @Published private(set) var adMobPublisherIDs: [String] = []
+    @Published var selectedPublisherID: String = ""
+    @Published private(set) var adMobReportEntity: AdMobReportEntity?
+    @Published private(set) var totalEarningsData: TotalEarningData?
     @Published var selectedDateRangeOption: DateRangeOption = .last7DaysVsPrevious7Days
-
-    @Published var adsMetricDatas: [AdMetricData]?
+    @Published private(set) var adsMetricDatas: [AdMetricData]?
 
     init(
         googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
@@ -133,18 +131,6 @@ extension AdMobReportEntity {
             thisMonthEarnings: thisMonthEarningsString,
             lastMonthEarnings: lastMonthEarningsString
         )
-    }
-
-    // Helper function to check if a date is today
-    private func isDateToday(_ date: Date) -> Bool {
-        let calendar = Calendar.current
-        return calendar.isDateInToday(date)
-    }
-
-    // Helper function to check if a date is yesterday
-    private func isDateYesterday(_ date: Date) -> Bool {
-        let calendar = Calendar.current
-        return calendar.isDateInYesterday(date)
     }
 
     // Helper function to check if a date is in the current month
