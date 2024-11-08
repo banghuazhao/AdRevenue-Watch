@@ -37,7 +37,7 @@ enum Dependency {
         accessTokenUseCase: accessTokenUseCase
     )
 
-    static let appViewModel = AppViewModel(sessionManager: sessionManager)
+    static let mainContentViewModel = MainContentViewModel(sessionManager: sessionManager)
 
     @MainActor static var onboardingViewModel: OnboardingViewModel {
         OnboardingViewModel(

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9972A7B52C8C62950027DBD2 /* AdRevenueWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9972A7B42C8C62950027DBD2 /* AdRevenueWatchApp.swift */; };
 		9972A7B92C8C62970027DBD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9972A7B82C8C62970027DBD2 /* Assets.xcassets */; };
 		9972A7BC2C8C62970027DBD2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9972A7BB2C8C62970027DBD2 /* Preview Assets.xcassets */; };
 		9972A7C42C8C63330027DBD2 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7C32C8C63330027DBD2 /* GoogleSignIn */; };
@@ -16,7 +15,6 @@
 		9972A7DA2C8DAA730027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7D92C8DAA730027DBD2 /* Repository */; };
 		9972A7DE2C8DAAA10027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7DD2C8DAAA10027DBD2 /* Repository */; };
 		9972A7E12C8DAAC40027DBD2 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 9972A7E02C8DAAC40027DBD2 /* Repository */; };
-		99A841CF2C8DAD3500D74617 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A841CE2C8DAD3500D74617 /* Dependency.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,19 +29,23 @@
 
 /* Begin PBXFileReference section */
 		9972A7B12C8C62950027DBD2 /* AdRevenueWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdRevenueWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9972A7B42C8C62950027DBD2 /* AdRevenueWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdRevenueWatchApp.swift; sourceTree = "<group>"; };
 		9972A7B82C8C62970027DBD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9972A7BB2C8C62970027DBD2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9972A7C72C8C63840027DBD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9972A7D42C8DA2580027DBD2 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
-		9972A7E22C8DAACB0027DBD2 /* Repository */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Repository; sourceTree = "<group>"; };
-		99A841CE2C8DAD3500D74617 /* Dependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependency.swift; sourceTree = "<group>"; };
 		99A841D12C8DBCD600D74617 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		99A841D72C8DBDCA00D74617 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		99FB734D2CAF730200924669 /* AdRevenueWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdRevenueWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		99A3D7C12CDEC82B00B93DAF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain,
+				Repository,
+			);
+			target = 9972A7B02C8C62950027DBD2 /* AdRevenueWatch */;
+		};
 		99FB73572CAF74C000924669 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -54,6 +56,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		99A3D7BF2CDEC7F000B93DAF /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		99A3D7C02CDEC81800B93DAF /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (99A3D7C12CDEC82B00B93DAF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
 		99FB73262CA96A3D00924669 /* Presentation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Presentation; sourceTree = "<group>"; };
 		99FB734E2CAF730200924669 /* AdRevenueWatchTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (99FB73572CAF74C000924669 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = AdRevenueWatchTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -103,10 +107,8 @@
 		9972A7B32C8C62950027DBD2 /* AdRevenueWatch */ = {
 			isa = PBXGroup;
 			children = (
-				9972A7E22C8DAACB0027DBD2 /* Repository */,
-				9972A7D42C8DA2580027DBD2 /* Domain */,
-				9972A7B42C8C62950027DBD2 /* AdRevenueWatchApp.swift */,
-				99A841CE2C8DAD3500D74617 /* Dependency.swift */,
+				99A3D7C02CDEC81800B93DAF /* Modules */,
+				99A3D7BF2CDEC7F000B93DAF /* App */,
 				99FB73262CA96A3D00924669 /* Presentation */,
 				99A841D22C8DBCD600D74617 /* Config */,
 				9972A7D32C8DA05B0027DBD2 /* Supportings */,
@@ -157,6 +159,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				99A3D7BF2CDEC7F000B93DAF /* App */,
+				99A3D7C02CDEC81800B93DAF /* Modules */,
 				99FB73262CA96A3D00924669 /* Presentation */,
 			);
 			name = AdRevenueWatch;
@@ -225,8 +229,8 @@
 			mainGroup = 9972A7A82C8C62950027DBD2;
 			packageReferences = (
 				9972A7C22C8C63330027DBD2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-				9972A7D52C8DA2800027DBD2 /* XCLocalSwiftPackageReference "AdRevenueWatch/Domain" */,
-				9972A7D82C8DAA730027DBD2 /* XCLocalSwiftPackageReference "AdRevenueWatch/Repository" */,
+				9941FB0A2CDEC88E000A678B /* XCLocalSwiftPackageReference "AdRevenueWatch/Modules/Domain" */,
+				9941FB0B2CDEC89D000A678B /* XCLocalSwiftPackageReference "AdRevenueWatch/Modules/Repository" */,
 			);
 			productRefGroup = 9972A7B22C8C62950027DBD2 /* Products */;
 			projectDirPath = "";
@@ -262,8 +266,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99A841CF2C8DAD3500D74617 /* Dependency.swift in Sources */,
-				9972A7B52C8C62950027DBD2 /* AdRevenueWatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,13 +541,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		9972A7D52C8DA2800027DBD2 /* XCLocalSwiftPackageReference "AdRevenueWatch/Domain" */ = {
+		9941FB0A2CDEC88E000A678B /* XCLocalSwiftPackageReference "AdRevenueWatch/Modules/Domain" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = AdRevenueWatch/Domain;
+			relativePath = AdRevenueWatch/Modules/Domain;
 		};
-		9972A7D82C8DAA730027DBD2 /* XCLocalSwiftPackageReference "AdRevenueWatch/Repository" */ = {
+		9941FB0B2CDEC89D000A678B /* XCLocalSwiftPackageReference "AdRevenueWatch/Modules/Repository" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = AdRevenueWatch/Repository;
+			relativePath = AdRevenueWatch/Modules/Repository;
 		};
 /* End XCLocalSwiftPackageReference section */
 

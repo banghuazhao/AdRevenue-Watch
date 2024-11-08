@@ -7,14 +7,14 @@ import Testing
 
 @testable import AdRevenueWatch
 
-struct AppViewModelTests {
+struct MainContentViewModelTests {
     @Test(
         arguments: zip(
             [true, false],
-            [AppViewModel.State.adMobReport, .onboarding]
+            [MainContentViewModel.State.home, .onboarding]
         )
     )
-    func monitorLoginStatus(isLoggedIn: Bool, viewModelState: AppViewModel.State) async throws {
+    func monitorLoginStatus(isLoggedIn: Bool, viewModelState: MainContentViewModel.State) async throws {
         // Arrange
         let stream = AsyncStream<Bool> { continuation in
             continuation.yield(isLoggedIn) // Simulate login success
@@ -22,7 +22,7 @@ struct AppViewModelTests {
         }
 
         let sessionManager = MockSessionManager(isLoggedInStream: stream)
-        let viewModel = AppViewModel(sessionManager: sessionManager)
+        let viewModel = MainContentViewModel(sessionManager: sessionManager)
 
         // Act
         await viewModel.monitorLoginStatus()

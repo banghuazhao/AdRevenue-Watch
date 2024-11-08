@@ -22,7 +22,6 @@ struct HomeView: View {
                     AdMobReportView(
                         viewModel: Dependency.createAdMobViewModel(adMobPublisherID: adMobPublisherID)
                     )
-                    .navigationTitle("AdMob Report")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Menu("Select Account", systemImage: "person.crop.circle") {

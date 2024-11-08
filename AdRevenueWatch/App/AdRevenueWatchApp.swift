@@ -19,8 +19,8 @@ struct AdRevenueWatchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppView(
-                viewModel: Dependency.appViewModel
+            MainContentView(
+                viewModel: Dependency.mainContentViewModel
             )
             .onOpenURL { url in
                 GIDSignIn.sharedInstance.handle(url)

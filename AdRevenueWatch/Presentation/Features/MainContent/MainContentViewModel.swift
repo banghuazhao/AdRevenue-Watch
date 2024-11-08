@@ -5,7 +5,7 @@
 
 import Foundation
 
-class AppViewModel: ObservableObject {
+class MainContentViewModel: ObservableObject {
     enum State {
         case onboarding
         case home

@@ -37,6 +37,7 @@ struct AdMobReportView: View {
 
                     AdsActivityPerformanceView(metrics: adsMetricDatas)
                 }
+                .navigationTitle("AdMob Report")
                 .onChange(of: viewModel.selectedDateRangeOption) { _ in
                     viewModel.onChangeOfSelectedDateRangeOption()
                 }

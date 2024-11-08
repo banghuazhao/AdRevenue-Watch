@@ -5,10 +5,10 @@
 
 import SwiftUI
 
-struct AppView: View {
-    @StateObject var viewModel: AppViewModel
+struct MainContentView: View {
+    @StateObject var viewModel: MainContentViewModel
 
-    init(viewModel: @autoclosure @escaping () -> AppViewModel) {
+    init(viewModel: @autoclosure @escaping () -> MainContentViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel())
     }
 
