@@ -26,7 +26,7 @@ enum Dependency {
             adMobReportRepository: AdMobReportRepository.newRepo
         )
     }
-    
+
     static var accessTokenUseCase: some AccessTokenUseCaseProtocol {
         AccessTokenUseCase(
             accessTokenProvider: KeychainAccessTokenProvider()
@@ -44,11 +44,18 @@ enum Dependency {
             googleAuthUseCase: googleAuthUseCase
         )
     }
-
-    @MainActor static var adMobViewModel: AdMobReportViewModel {
-        AdMobReportViewModel(
+    
+    @MainActor static var homeViewModel: HomeViewModel {
+        HomeViewModel(
             googleAuthUseCase: googleAuthUseCase,
             adMobAccountUseCase: adMobAccountUseCase,
+            sessionManager: sessionManager
+        )
+    }
+
+    @MainActor static func createAdMobViewModel(adMobPublisherID: String) -> AdMobReportViewModel {
+        AdMobReportViewModel(
+            adMobPublisherID: adMobPublisherID,
             adMobReportUseCase: adMobReportUseCase
         )
     }

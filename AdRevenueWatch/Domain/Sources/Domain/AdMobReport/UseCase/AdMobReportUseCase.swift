@@ -25,6 +25,6 @@ public struct AdMobReportUseCase: AdMobReportUseCaseProtocol {
         accountID: String,
         reportRequest: AdMobReportRequestEntity
     ) async throws -> AdMobReportEntity {
-        return try await adMobReportRepository.fetchReport(accountID: accountID, reportRequest: reportRequest)
+        try await adMobReportRepository.fetchReport(accountID: accountID, reportRequest: reportRequest)
     }
 }

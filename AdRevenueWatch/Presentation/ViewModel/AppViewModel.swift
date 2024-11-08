@@ -8,7 +8,7 @@ import Foundation
 class AppViewModel: ObservableObject {
     enum State {
         case onboarding
-        case adMobReport
+        case home
     }
 
     @Published var state: State = .onboarding
@@ -21,7 +21,7 @@ class AppViewModel: ObservableObject {
     @MainActor
     func monitorLoginStatus() async {
         for await isLoggedIn in sessionManager.isLoggedInStream {
-            state = isLoggedIn ? .adMobReport : .onboarding
+            state = isLoggedIn ? .home : .onboarding
         }
     }
 }

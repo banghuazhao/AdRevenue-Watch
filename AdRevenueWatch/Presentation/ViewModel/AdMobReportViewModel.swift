@@ -9,9 +9,9 @@ import Foundation
 @MainActor
 class AdMobReportViewModel: ObservableObject {
     enum State {
-        case fetchingAccounts
-        case fetchingReport
-        case reports
+        case loading
+        case reports(totalEarningsData: TotalEarningData, adsMetricDatas: [AdMetricData])
+        case error
     }
 
     enum DateRangeOption: String, CaseIterable, Identifiable {
@@ -22,47 +22,25 @@ class AdMobReportViewModel: ObservableObject {
 
         var id: String { rawValue }
     }
-    
-    private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
-    private let adMobAccountUseCase: any AdMobAccountUseCaseProtocol
-    private let adMobReportUseCase: any AdMobReportUseCaseProtocol
-    private let sessionManager: any SessionManagerProtocol
 
-    @Published private(set) var state: State = .fetchingAccounts
-    @Published private(set) var adMobPublisherIDs: [String] = []
-    @Published var selectedPublisherID: String = ""
+    private let adMobPublisherID: String
+    private let adMobReportUseCase: any AdMobReportUseCaseProtocol
+
+    @Published private(set) var state: State = .loading
+
     @Published private(set) var adMobReportEntity: AdMobReportEntity?
-    @Published private(set) var totalEarningsData: TotalEarningData?
     @Published var selectedDateRangeOption: DateRangeOption = .last7DaysVsPrevious7Days
-    @Published private(set) var adsMetricDatas: [AdMetricData]?
 
     init(
-        googleAuthUseCase: some GoogleAuthUseCaseProtocol = Dependency.googleAuthUseCase,
-        adMobAccountUseCase: some AdMobAccountUseCaseProtocol = Dependency.adMobAccountUseCase,
-        adMobReportUseCase: some AdMobReportUseCaseProtocol = Dependency.adMobReportUseCase,
-        sessionManager: some SessionManagerProtocol = Dependency.sessionManager
+        adMobPublisherID: String,
+        adMobReportUseCase: some AdMobReportUseCaseProtocol = Dependency.adMobReportUseCase
     ) {
-        self.googleAuthUseCase = googleAuthUseCase
-        self.adMobAccountUseCase = adMobAccountUseCase
+        self.adMobPublisherID = adMobPublisherID
         self.adMobReportUseCase = adMobReportUseCase
-        self.sessionManager = sessionManager
     }
 
-    func onLoad() async {
-        state = .fetchingAccounts
-
-        do {
-            let adMobAccounts = try await adMobAccountUseCase.fetchAccounts()
-            adMobPublisherIDs = adMobAccounts.map(\.publisherID)
-            selectedPublisherID = adMobPublisherIDs.first ?? ""
-            await fetchAdMobReport(accountID: selectedPublisherID)
-        } catch {
-            state = .reports
-        }
-    }
-
-    func fetchAdMobReport(accountID: String) async {
-        state = .fetchingReport
+    func fetchAdMobReport() async {
+        state = .loading
         let today = Date()
         let calendar = Calendar.current
         guard let twoMonthsAgo = calendar.date(byAdding: .month, value: -2, to: today) else { return }
@@ -74,32 +52,34 @@ class AdMobReportViewModel: ObservableObject {
 
         do {
             adMobReportEntity = try await adMobReportUseCase.fetchReport(
-                accountID: accountID,
+                accountID: adMobPublisherID,
                 reportRequest: reportRequest
             )
-            totalEarningsData = adMobReportEntity?.toTotalEarningData()
-            adsMetricDatas = adMobReportEntity?.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
+            guard let adMobReportEntity else {
+                state = .error
+                return
+            }
+            let totalEarningsData = adMobReportEntity.toTotalEarningData()
+            let adsMetricDatas = adMobReportEntity.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
+            state = .reports(totalEarningsData: totalEarningsData, adsMetricDatas: adsMetricDatas)
         } catch {
             print("Failed to fetch report: \(error.localizedDescription)")
+            state = .error
         }
-        state = .reports
-    }
-
-    func onTapLogout() async {
-        await googleAuthUseCase.signOut()
-        sessionManager.refreshAuthenticationStatus()
     }
 
     func onChangeOfSelectedDateRangeOption() {
         guard let adMobReportEntity else { return }
-        adsMetricDatas = adMobReportEntity.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
+        let totalEarningsData = adMobReportEntity.toTotalEarningData()
+        let adsMetricDatas = adMobReportEntity.toAdsMetricDatas(dateRangeOption: selectedDateRangeOption)
+        state = .reports(totalEarningsData: totalEarningsData, adsMetricDatas: adsMetricDatas)
     }
 }
 
 extension AdMobReportEntity {
     func toTotalEarningData() -> TotalEarningData {
         let sortedDailyData = dailyPerformances.sorted { $0.date < $1.date }
-        
+
         let todayEarnings: Decimal = sortedDailyData.last?.estimatedEarnings ?? 0
         let yesterdayEarnings: Decimal = sortedDailyData.dropLast().last?.estimatedEarnings ?? 0
         var thisMonthEarnings: Decimal = 0

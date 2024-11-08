@@ -19,9 +19,9 @@ struct AppView: View {
                 OnboardingView(
                     viewModel: Dependency.onboardingViewModel
                 )
-            case .adMobReport:
-                AdMobReportView(
-                    viewModel: Dependency.adMobViewModel
+            case .home:
+                HomeView(
+                    viewModel: Dependency.homeViewModel
                 )
             }
         }
