@@ -46,12 +46,19 @@ struct HomeView: View {
                         }
                     }
                 }
-            case .error:
-                Text("error")
+            case .error(let description):
+                ErrorStateView(
+                    title: "Failed to fetch AdMob accounts",
+                    subtitle: description,
+                    buttonTitle: "Retry") {
+                        Task {
+                            await viewModel.fetchAdMobAccounts()
+                        }
+                    }
             }
         }
         .task {
-            await viewModel.onLoad()
+            await viewModel.fetchAdMobAccounts()
         }
     }
 }

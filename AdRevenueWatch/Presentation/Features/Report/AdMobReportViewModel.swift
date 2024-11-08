@@ -11,7 +11,7 @@ class AdMobReportViewModel: ObservableObject {
     enum State {
         case loading
         case reports(totalEarningsData: TotalEarningData, adsMetricDatas: [AdMetricData])
-        case error
+        case error(description: String)
     }
 
     enum DateRangeOption: String, CaseIterable, Identifiable {
@@ -56,7 +56,7 @@ class AdMobReportViewModel: ObservableObject {
                 reportRequest: reportRequest
             )
             guard let adMobReportEntity else {
-                state = .error
+                state = .error(description: "No AdMob Report")
                 return
             }
             let totalEarningsData = adMobReportEntity.toTotalEarningData()
@@ -64,7 +64,7 @@ class AdMobReportViewModel: ObservableObject {
             state = .reports(totalEarningsData: totalEarningsData, adsMetricDatas: adsMetricDatas)
         } catch {
             print("Failed to fetch report: \(error.localizedDescription)")
-            state = .error
+            state = .error(description: error.localizedDescription)
         }
     }
 

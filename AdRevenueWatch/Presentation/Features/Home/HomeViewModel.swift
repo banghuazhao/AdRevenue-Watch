@@ -11,7 +11,7 @@ class HomeViewModel: ObservableObject {
     enum State {
         case loading
         case report(adMobPublisherID: String)
-        case error
+        case error(description: String)
     }
 
     private let googleAuthUseCase: any GoogleAuthUseCaseProtocol
@@ -32,16 +32,20 @@ class HomeViewModel: ObservableObject {
         self.sessionManager = sessionManager
     }
 
-    func onLoad() async {
+    func fetchAdMobAccounts() async {
         state = .loading
 
         do {
             let adMobAccounts = try await adMobAccountUseCase.fetchAccounts()
             adMobPublisherIDs = adMobAccounts.map(\.publisherID)
-            selectedPublisherID = adMobPublisherIDs.first ?? ""
+            guard let firstPublisherID = adMobPublisherIDs.first else {
+                state = .error(description: "No AdMob account")
+                return
+            }
+            selectedPublisherID = firstPublisherID
             fetchReport(for: selectedPublisherID)
         } catch {
-            state = .error
+            state = .error(description: error.localizedDescription)
         }
     }
 

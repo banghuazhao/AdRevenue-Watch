@@ -41,8 +41,15 @@ struct AdMobReportView: View {
                 .onChange(of: viewModel.selectedDateRangeOption) { _ in
                     viewModel.onChangeOfSelectedDateRangeOption()
                 }
-            case .error:
-                Text("error")
+            case .error(let description):
+                ErrorStateView(
+                    title: "Failed to fetch AdMob Report",
+                    subtitle: description,
+                    buttonTitle: "Retry") {
+                        Task {
+                            await viewModel.fetchAdMobReport()
+                        }
+                    }
             }
         }
         .task {
