@@ -220,6 +220,8 @@ extension AdMobReportEntity {
 
     // Function to handle comparison between two periods
     private func calculateComparisonMetrics(lastPeriod: [DailyAdPerformance], previousPeriod: [DailyAdPerformance]) -> [AdMetricData] {
+        let shouldCreateChart = lastPeriod.count > 1 || previousPeriod.count > 1
+
         let lastTotalRequests = lastPeriod.reduce(0) { $0 + $1.adRequests }
         let lastTotalImpressions = lastPeriod.reduce(0) { $0 + $1.impressions }
         let lastTotalEarnings = lastPeriod.reduce(Decimal(0)) { $0 + $1.estimatedEarnings }
@@ -239,21 +241,33 @@ extension AdMobReportEntity {
         // Calculate percentage and value changes
         let requestsValueChange = lastTotalRequests - previousTotalRequests
         let requestsPercentageChange = percentageChange(current: lastTotalRequests, previous: previousTotalRequests)
+        let previousRequestData = previousPeriod.map { (date: $0.date, value: Decimal($0.adRequests)) }
+        let currentRequestData = lastPeriod.map { (date: $0.date, value: Decimal($0.adRequests)) }
 
         let impressionsValueChange = lastTotalImpressions - previousTotalImpressions
         let impressionsPercentageChange = percentageChange(current: lastTotalImpressions, previous: previousTotalImpressions)
+        let previousImpressionsData = previousPeriod.map { (date: $0.date, value: Decimal($0.impressions)) }
+        let currentImpressionsData = lastPeriod.map { (date: $0.date, value: Decimal($0.impressions)) }
 
         let earningsValueChange = lastTotalEarnings - previousTotalEarnings
         let earningsPercentageChange = percentageChange(current: lastTotalEarnings, previous: previousTotalEarnings)
+        let previousEarningsData = previousPeriod.map { (date: $0.date, value: $0.estimatedEarnings) }
+        let currentEarningsData = lastPeriod.map { (date: $0.date, value: $0.estimatedEarnings) }
 
         let matchRateValueChange = lastTotalMatchRate - previousTotalMatchRate
         let matchRatePercentageChange = percentageChange(current: lastTotalMatchRate, previous: previousTotalMatchRate)
+        let previousMatchRateData = previousPeriod.map { (date: $0.date, value: $0.matchRate) }
+        let currentMatchRateData = lastPeriod.map { (date: $0.date, value: $0.matchRate) }
 
         let eCPMValueChange = lastTotalECPM - previousTotalECPM
         let eCPMPercentageChange = percentageChange(current: lastTotalECPM, previous: previousTotalECPM)
+        let previousECPMData = previousPeriod.map { (date: $0.date, value: $0.eCPM) }
+        let currentECPMData = lastPeriod.map { (date: $0.date, value: $0.eCPM) }
 
         let clicksValueChange = lastTotalClicks - previousTotalClicks
         let clicksPercentageChange = percentageChange(current: lastTotalClicks, previous: previousTotalClicks)
+        let previousClicksData = previousPeriod.map { (date: $0.date, value: Decimal($0.clicks)) }
+        let currentClicksData = lastPeriod.map { (date: $0.date, value: Decimal($0.clicks)) }
 
         // Format value changes and percentage changes together
         return [
@@ -261,37 +275,73 @@ extension AdMobReportEntity {
                 title: "Estimated earnings",
                 value: formatter.string(from: lastTotalEarnings as NSDecimalNumber) ?? "$0.00",
                 change: "\(formatter.string(from: earningsValueChange as NSDecimalNumber) ?? "$0.00") (\(formatChange(value: earningsPercentageChange)))",
-                isPositive: earningsPercentageChange >= 0
+                isPositive: earningsPercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousEarningsData),
+                        LineChartData(dateCategory: .current, data: currentEarningsData),
+                    ]
+                    : nil
             ),
             AdMetricData(
                 title: "Requests",
                 value: lastTotalRequests.formatWithUnits,
                 change: "\(requestsValueChange.formatWithUnits) (\(formatChange(value: requestsPercentageChange)))",
-                isPositive: requestsPercentageChange >= 0
+                isPositive: requestsPercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousRequestData),
+                        LineChartData(dateCategory: .current, data: currentRequestData),
+                    ]
+                    : nil
             ),
             AdMetricData(
                 title: "Impressions",
                 value: lastTotalImpressions.formatWithUnits,
                 change: "\(impressionsValueChange.formatWithUnits) (\(formatChange(value: impressionsPercentageChange)))",
-                isPositive: impressionsPercentageChange >= 0
+                isPositive: impressionsPercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousImpressionsData),
+                        LineChartData(dateCategory: .current, data: currentImpressionsData),
+                    ]
+                    : nil
             ),
             AdMetricData(
                 title: "Match rate",
                 value: String(format: "%.2f%%", NSDecimalNumber(decimal: lastTotalMatchRate).doubleValue * 100),
                 change: "\(String(format: "%.2f%%", NSDecimalNumber(decimal: matchRateValueChange).doubleValue * 100)) (\(formatChange(value: matchRatePercentageChange)))",
-                isPositive: matchRatePercentageChange >= 0
+                isPositive: matchRatePercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousMatchRateData),
+                        LineChartData(dateCategory: .current, data: currentMatchRateData),
+                    ]
+                    : nil
             ),
             AdMetricData(
                 title: "eCPM",
                 value: formatter.string(from: lastTotalECPM as NSDecimalNumber) ?? "$0.00",
                 change: "\(formatter.string(from: eCPMValueChange as NSDecimalNumber) ?? "$0.00") (\(formatChange(value: eCPMPercentageChange)))",
-                isPositive: eCPMPercentageChange >= 0
+                isPositive: eCPMPercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousECPMData),
+                        LineChartData(dateCategory: .current, data: currentECPMData),
+                    ]
+                    : nil
             ),
             AdMetricData(
                 title: "Clicks",
                 value: lastTotalClicks.formatWithUnits,
                 change: "\(clicksValueChange.formatWithUnits) (\(formatChange(value: clicksPercentageChange)))",
-                isPositive: clicksPercentageChange >= 0
+                isPositive: clicksPercentageChange >= 0,
+                multiLineData: shouldCreateChart
+                    ? [
+                        LineChartData(dateCategory: .previous, data: previousClicksData),
+                        LineChartData(dateCategory: .current, data: currentClicksData),
+                    ]
+                    : nil
             ),
         ]
     }

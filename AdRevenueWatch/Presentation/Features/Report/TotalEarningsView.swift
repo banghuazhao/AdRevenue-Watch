@@ -58,14 +58,8 @@ struct TotalEarningsGridView: View {
                 // 1x4 layout for iPad (regular size)
                 GridRow {
                     todayEarnings
-                }
-                GridRow {
                     yesterdayEarnings
-                }
-                GridRow {
                     thisMonthEarnings
-                }
-                GridRow {
                     lastMonthEarnings
                 }
             }
@@ -81,14 +75,17 @@ struct TotalEarningsColumnView: View {
     var amount: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.footnote)
-                .foregroundColor(.white)
-            Text(amount)
-                .font(.headline)
-                .bold()
-                .foregroundColor(.white)
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(label)
+                    .font(.footnote)
+                    .foregroundColor(.white)
+                Text(amount)
+                    .font(.headline)
+                    .bold()
+                    .foregroundColor(.white)
+            }
+            Spacer()
         }
         .frame(maxWidth: .infinity)
     }
